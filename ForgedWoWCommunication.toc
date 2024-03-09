@@ -1,0 +1,40 @@
+## Interface: 30300
+## Title : Forged WoW
+## Notes: Forged WoW Interface
+## Author: Forged WoW + tester
+
+ForgeConstants.lua
+ForgeConnection.lua
+PowerType.lua
+
+Components\Tooltips\items.lua
+
+Components\Perks\Initialize.lua
+Components\Perks\Constants.lua
+Components\Perks\SharedFunctions.lua
+Components\Perks\Explorer.lua
+Components\Perks\Selection.lua
+Components\Perks\Inspect.lua
+
+Components\Transmog\Constants.lua
+Components\Transmog\Transmog.lua
+Components\Transmog\Initialize.lua
+
+Components\WorldTier\Initialize.lua
+Components\WorldTier\WorldTier.lua
+
+Components\Portalmaster\Initialize.lua
+Components\Portalmaster\Portalmaster.lua
+
+Components\AllStats\CustomPanel.lua
+Components\AllStats\FrameCreation.lua
+Components\AllStats\FunctionOverrides.lua
+Components\AllStats\Initialize.lua
+
+Components\SoulShard\Initialize.lua
+
+# Core Code
+Core\UIFixes.lua
+
+initializeMod.lua
+
