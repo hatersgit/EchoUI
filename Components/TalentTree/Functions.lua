@@ -1,40 +1,43 @@
 function HideMainWindow()
     if TalentTreeWindow:IsShown() then
         TalentTreeWindow:Hide()
-        ForgedWoWMicrobarButton:SetButtonState("NORMAL");
+        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
     end
 end
 
 function ToggleMainWindow()
     if TalentTreeWindow:IsShown() then
         TalentTreeWindow:Hide()
-        PlaySound("TalentScreenClose");
-        ForgedWoWMicrobarButton:SetButtonState("NORMAL");
+        PlaySound("TalentScreenClose")
+        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
     else
         TalentTreeWindow:Show()
-        PlaySound("TalentScreenOpen");
-        ForgedWoWMicrobarButton:SetButtonState("PUSHED", 1);
+        PlaySound("TalentScreenOpen")
+        ForgedWoWMicrobarButton:SetButtonState("PUSHED", 1)
     end
     if SpellBookFrame:IsShown() then
-        SpellBookFrame:Hide();
+        SpellBookFrame:Hide()
     end
     if PVPParentFrame:IsShown() then
-        PVPParentFrame:Hide();
+        PVPParentFrame:Hide()
     end
     if FriendsFrame:IsShown() then
-        FriendsFrame:Hide();
+        FriendsFrame:Hide()
     end
 end
 
-TalentTreeWindow:HookScript("OnHide", function()
-    ForgedWoWMicrobarButton:SetButtonState("NORMAL");
-end)
+TalentTreeWindow:HookScript(
+    "OnHide",
+    function()
+        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
+    end
+)
 
 function FindTabInForgeSpell(tabId)
     for _, page in ipairs(TalentTree.FORGE_SPELLS_PAGES) do
         for _, tab in pairs(page) do
             if tonumber(tab.Id) == tonumber(tabId) then
-                return tab;
+                return tab
             end
         end
     end
@@ -82,31 +85,29 @@ local function UpdateActivateSpecButton(tab)
         button:SetPushedTexture(nil)
         button:SetHighlightTexture(nil)
         button:GetFontString():SetTextColor(0, 1, 0)
-		button:SetButtonState("PUSHED")
+        button:SetButtonState("PUSHED")
     else
         button:SetText("Activate")
         button:SetNormalFontObject(GameFontNormalSmall)
-		button:SetButtonState("NORMAL")
+        button:SetButtonState("NORMAL")
 
         local textures = originalButtonTextures[tab.Id]
         UpdateButtonTexture(button, "normal", textures.normal)
         UpdateButtonTexture(button, "pushed", textures.pushed)
         UpdateButtonTexture(button, "highlight", textures.highlight)
 
-
         button:GetFontString():SetTextColor(1, 1, 1)
     end
 end
 
-
 function FindExistingTab(tabId)
     for _, tab in ipairs(TalentTree.FORGE_TABS) do
         if tonumber(tab.Id) == tonumber(tabId) then
-            return tab;
+            return tab
         end
     end
 
-    return TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE];
+    return TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE]
 end
 
 function UpdateTalentCurrentView()
@@ -121,31 +122,30 @@ function UpdateTalentCurrentView()
     --         InitializeViewFromGrid(TalentTreeWindow.GridTalent, CurrentTab.Talents, CurrentTab.Id, 392);
     --     end
     -- end
-	
 end
 
 function FindTalent(talentId, talents)
     for _, talent in pairs(talents) do
         if talent.SpellId == talentId then
-            return talent;
+            return talent
         end
     end
 end
 
 function UpdateTalent(tabId, talents)
     if not talents then
-        return;
+        return
     end
     for spellId, rank in pairs(talents) do
         local tab = FindExistingTab(tabId)
         if tab then
             local talent = FindTalent(spellId, tab.Talents)
---            local ColumnIndex = tonumber(talent.ColumnIndex);
---            local RowIndex = tonumber(talent.RowIndex);
+            --            local ColumnIndex = tonumber(talent.ColumnIndex);
+            --            local RowIndex = tonumber(talent.RowIndex);
             if tab.TalentType == CharacterPointType.FORGE_SKILL_TREE then
                 RankUpTalent(TalentTreeWindow.GridForgeSkill.Talents[ColumnIndex][RowIndex], rank, talent, tabId)
-            else
-      --          RankUpTalent(TalentTreeWindow.GridTalent.Talents[ColumnIndex][RowIndex], rank, talent, tabId)
+            --else
+            --          RankUpTalent(TalentTreeWindow.GridTalent.Talents[ColumnIndex][RowIndex], rank, talent, tabId)
             end
         end
     end
@@ -153,60 +153,63 @@ end
 
 function RankUpTalent(frame, rank, talent, tabId)
     if frame then
-        frame.RankText:SetText(CurrentRankSpell(rank));
-        local CurrentRank, SpellId, NextSpellId = GetSpellIdAndNextRank(tabId, talent);
+        frame.RankText:SetText(CurrentRankSpell(rank))
+        local CurrentRank, SpellId, NextSpellId = GetSpellIdAndNextRank(tabId, talent)
         if IsUnlocked(CurrentRank, talent.NumberOfRanks) then
-           --[[ frame.Border:SetBackdrop({
+            --[[ frame.Border:SetBackdrop({
 
                 bgFile = CONSTANTS.UI.BORDER_UNLOCKED
             })]]
         else
             if CurrentRank ~= -1 then
-                frame.TextureIcon:SetDesaturated(nil);
-             --[[   frame.Border:SetBackdrop({
+                --[[   frame.Border:SetBackdrop({
                     bgFile = CONSTANTS.UI.BORDER_ACTIVE
                 })]]
+                frame.TextureIcon:SetDesaturated(nil)
             else
                 if CurrentRank < 1 then
-                    frame.TextureIcon:SetDesaturated(1);
-                --[[    frame.Border:SetBackdrop({
+                    --[[    frame.Border:SetBackdrop({
                         bgFile = CONSTANTS.UI.BORDER_LOCKED
                     })]]
+                    frame.TextureIcon:SetDesaturated(1)
                 else
-                 --[[   frame.Border:SetBackdrop({
+                    --[[   frame.Border:SetBackdrop({
                         bgFile = CONSTANTS.UI.BORDER_ACTIVE
                     })]]
                 end
             end
         end
-        frame:HookScript("OnEnter", function()
-            CreateTooltip(talent, SpellId, NextSpellId, frame, CurrentRank);
-        end)
+        frame:HookScript(
+            "OnEnter",
+            function()
+                CreateTooltip(talent, SpellId, NextSpellId, frame, CurrentRank)
+            end
+        )
         if frame.IsTooltipActive then
-            CreateTooltip(talent, SpellId, NextSpellId, frame, CurrentRank);
+            CreateTooltip(talent, SpellId, NextSpellId, frame, CurrentRank)
         end
     end
 end
 
 function UpdateOldTabTalents(newTab)
-    local oldTab = FindExistingTab(newTab.Id);
+    local oldTab = FindExistingTab(newTab.Id)
     if oldTab then
-        oldTab.Talents = newTab.Talents;
+        oldTab.Talents = newTab.Talents
     end
 end
 
 function GetStrByCharacterPointType(talentType)
     if talentType == CharacterPointType.RACIAL_TREE then
-        return "racial";
+        return "racial"
     end
     if talentType == CharacterPointType.PRESTIGE_TREE then
-        return "prestige";
+        return "prestige"
     end
     if talentType == CharacterPointType.TALENT_SKILL_TREE then
-        return "talent";
+        return "talent"
     end
     if talentType == CharacterPointType.FORGE_SKILL_TREE then
-        return "forge";
+        return "forge"
     end
 end
 
@@ -215,10 +218,10 @@ function GetPositionXY(frame)
         x = 0,
         y = 0
     }
-    local _, _, _, xOfs, yOfs = frame:GetPoint();
-    position.x = xOfs;
-    position.y = yOfs;
-    return position;
+    local _, _, _, xOfs, yOfs = frame:GetPoint()
+    position.x = xOfs
+    position.y = yOfs
+    return position
 end
 
 function IsNodeUnlocked(talent, CurrentRank)
@@ -226,7 +229,7 @@ function IsNodeUnlocked(talent, CurrentRank)
 end
 
 function DrawNode(startPosition, endPosition, parentFrame, parent, offSet, talent, CurrentRank, previousSpell)
-    local nodeSize = 0.05  -- Este é um valor arbitrário; ajuste para o tamanho real dos seus nós
+    local nodeSize = 0.05 -- Este é um valor arbitrário; ajuste para o tamanho real dos seus nós
     local x1 = startPosition.x + nodeSize / 2
     local y1 = startPosition.y + nodeSize / 2
     local x2 = endPosition.x + nodeSize / 2
@@ -235,86 +238,93 @@ function DrawNode(startPosition, endPosition, parentFrame, parent, offSet, talen
     local dx = x2 - x1
     local dy = y2 - y1
     local angle = math.atan2(dy, dx)
-    local length = math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
+    local length = math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
     local cx = (x1 + x2) / 2
     local cy = (y1 + y2) / 2
 
-if dy ~= 0 and dx == 0 then  -- Verifica se a linha é puramente vertical
-    cx = cx - 1
-end
+    if dy ~= 0 and dx == 0 then -- Verifica se a linha é puramente vertical
+        cx = cx - 1
+    end
 
+    if not parentFrame.node[talent.SpellId] then
+        parentFrame.node[talent.SpellId] = CreateFrame("Frame", parentFrame.node[talent.SpellId], parent)
+        parentFrame.node[talent.SpellId]:SetSize(length - 30, 12)
+        parentFrame.node[talent.SpellId]:SetPoint("CENTER", cx, cy)
 
-if not parentFrame.node[talent.SpellId] then
-    parentFrame.node[talent.SpellId] = CreateFrame("Frame", parentFrame.node[talent.SpellId], parent)
-    parentFrame.node[talent.SpellId]:SetSize(length - 30, 12) 
-    parentFrame.node[talent.SpellId]:SetPoint("CENTER", cx, cy)
-	
-	
         if IsNodeUnlocked(talent, CurrentRank) then
-            parentFrame.node[talent.SpellId]:SetBackdrop({
-                bgFile = CONSTANTS.UI.CONNECTOR
-            })
+            parentFrame.node[talent.SpellId]:SetBackdrop(
+                {
+                    bgFile = CONSTANTS.UI.CONNECTOR
+                }
+            )
         else
-            parentFrame.node[talent.SpellId]:SetBackdrop({
-                bgFile = CONSTANTS.UI.CONNECTOR_DISABLED
-            })
+            parentFrame.node[talent.SpellId]:SetBackdrop(
+                {
+                    bgFile = CONSTANTS.UI.CONNECTOR_DISABLED
+                }
+            )
         end
 
-		
-    local angleToSet
+        local angleToSet
 
-    if y2 > y1 then
-        if x2 == x1 then
-            angleToSet = 90
-        elseif x2 > x1 then
-            angleToSet = 35
+        if y2 > y1 then
+            if x2 == x1 then
+                angleToSet = 90
+            elseif x2 > x1 then
+                angleToSet = 35
+            else
+                angleToSet = -35
+            end
+        elseif y2 < y1 then
+            if x2 == x1 then
+                angleToSet = -90
+            elseif x2 > x1 then
+                angleToSet = -35
+            else
+                angleToSet = 35
+            end
         else
-            angleToSet = -35
+            if x2 > x1 then
+                angleToSet = 0
+            else
+                angleToSet = 180
+            end
         end
-    elseif y2 < y1 then
-        if x2 == x1 then
-            angleToSet = -90
-        elseif x2 > x1 then
-            angleToSet = -35
-        else
-            angleToSet = 35
+
+        local arrowTextureSize = 30
+        local arrowOffset = arrowTextureSize / 2
+
+        -- Calcular a nova posição da ponta da seta, ajustando com base no ângulo
+        local arrowCenterX = x2 - arrowOffset * math.cos(angle)
+        local arrowCenterY = y2 - arrowOffset * math.sin(angle)
+
+        if not parentFrame.node[talent.SpellId].arrowTexture then
+            parentFrame.node[talent.SpellId].arrowTexture =
+                parentFrame.node[talent.SpellId]:CreateTexture(nil, "ARTWORK")
+            parentFrame.node[talent.SpellId].arrowTexture:SetSize(arrowTextureSize, arrowTextureSize)
+            parentFrame.node[talent.SpellId].arrowTexture:SetTexture(
+                "Interface\\AddOns\\ForgedWoWCommunication\\UI\\arrowtip"
+            )
+            parentFrame.node[talent.SpellId].arrowTexture:SetPoint(
+                "CENTER",
+                parentFrame.node[talent.SpellId],
+                "BOTTOMLEFT",
+                arrowCenterX - cx,
+                arrowCenterY - cy
+            )
+            parentFrame.node[talent.SpellId].arrowTexture:SetRotation(angle)
+            parentFrame.node[talent.SpellId].arrowTexture:Hide()
         end
-    else
-        if x2 > x1 then
-            angleToSet = 0
-        else
-            angleToSet = 180
-        end
-    end
-	
-    local arrowTextureSize = 30
-    local arrowOffset = arrowTextureSize / 2
-
-    -- Calcular a nova posição da ponta da seta, ajustando com base no ângulo
-    local arrowCenterX = x2 - arrowOffset * math.cos(angle)
-    local arrowCenterY = y2 - arrowOffset * math.sin(angle)
-
-    if not parentFrame.node[talent.SpellId].arrowTexture then
-        parentFrame.node[talent.SpellId].arrowTexture = parentFrame.node[talent.SpellId]:CreateTexture(nil, "ARTWORK")
-        parentFrame.node[talent.SpellId].arrowTexture:SetSize(arrowTextureSize, arrowTextureSize)
-        parentFrame.node[talent.SpellId].arrowTexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\arrowtip")
-        parentFrame.node[talent.SpellId].arrowTexture:SetPoint("CENTER", parentFrame.node[talent.SpellId], "BOTTOMLEFT", arrowCenterX - cx, arrowCenterY - cy)
-        parentFrame.node[talent.SpellId].arrowTexture:SetRotation(angle)
-        parentFrame.node[talent.SpellId].arrowTexture:Hide()
-    end
-    
-
 
         parentFrame.node[talent.SpellId].animation = parentFrame.node[talent.SpellId]:CreateAnimationGroup()
-        parentFrame.node[talent.SpellId].animation.spin = parentFrame.node[talent.SpellId].animation:CreateAnimation(
-            "Rotation")
+        parentFrame.node[talent.SpellId].animation.spin =
+            parentFrame.node[talent.SpellId].animation:CreateAnimation("Rotation")
         parentFrame.node[talent.SpellId].animation.spin:SetOrder(1)
         parentFrame.node[talent.SpellId].animation.spin:SetDuration(0)
         parentFrame.node[talent.SpellId].animation.spin:SetDegrees(angleToSet)
 
         parentFrame.node[talent.SpellId].animation.spin:SetEndDelay(999999)
         parentFrame.node[talent.SpellId].animation:Play()
-
     end
 end
 
@@ -327,37 +337,18 @@ function Tablelength(T)
 end
 
 function SplitSpellsByChunk(array, nb)
-    local chunks = {};
-    local i = 1;
-    for index, value in ipairs(array) do
+    local chunks = {}
+    local i = 1
+    for _, value in ipairs(array) do
         if chunks[i] == nil then
-            chunks[i] = {};
+            chunks[i] = {}
         end
-        table.insert(chunks[i], value);
+        table.insert(chunks[i], value)
         if Tablelength(chunks[i]) > nb then
             i = i + 1
         end
     end
     return chunks
-end
-
-local Backdrop = {
-    bgFile = "Interface/Tooltips/UI-Tooltip-Background",  -- Arquivo de textura do fundo
-    edgeFile = "Interface/Tooltips/UI-Tooltip-Border",  -- Arquivo de textura da borda
-    tile = true, tileSize = 16, edgeSize = 16, 
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }
-}
-
-local function printTable(t, indent)
-    indent = indent or ""
-    for key, value in pairs(t) do
-        if type(value) == "table" then
-            print(indent .. tostring(key) .. ": ")
-            printTable(value, indent .. "  ")
-        else
-            print(indent .. tostring(key) .. ": " .. tostring(value))
-        end
-    end
 end
 
 function findTabIndexById(tabId)
@@ -371,7 +362,7 @@ end
 
 local lastPushedTabId = nil
 function SelectTab(tab)
-    TalentTree.FORGE_SELECTED_TAB = tab;    
+    TalentTree.FORGE_SELECTED_TAB = tab
 
     -- if tab.TalentType == CharacterPointType.SKILL_PAGE then
     --     ShowTypeTalentPoint(CharacterPointType.FORGE_SKILL_TREE, "forge", tab.Id)
@@ -379,8 +370,10 @@ function SelectTab(tab)
     -- else
     --     TalentTreeWindow.SpellBook:Hide();
     -- end
-    if tab.TalentType == CharacterPointType.RACIAL_TREE or tab.TalentType == CharacterPointType.TALENT_SKILL_TREE or
-        tab.TalentType == CharacterPointType.PRESTIGE_TREE then
+    if
+        tab.TalentType == CharacterPointType.RACIAL_TREE or tab.TalentType == CharacterPointType.TALENT_SKILL_TREE or
+            tab.TalentType == CharacterPointType.PRESTIGE_TREE
+     then
         if not TreeCache.Spells[tab.Id] then
             TreeCache.Spells[tab.Id] = {}
         end
@@ -390,19 +383,19 @@ function SelectTab(tab)
         if not TreeCache.IndexToFrame[tab.Id] then
             TreeCache.IndexToFrame[tab.Id] = {}
         end
-        InitializeGridForTalent();
+        InitializeGridForTalent()
         if tab.Talents then
-            InitializeViewFromGrid(TalentTreeWindow.GridTalent, tab.Talents, tab.Id);
+            InitializeViewFromGrid(TalentTreeWindow.GridTalent, tab.Talents, tab.Id)
         end
-        TalentTreeWindow.GridTalent:Show();
+        TalentTreeWindow.GridTalent:Show()
     else
-        TalentTreeWindow.GridTalent:Hide();
+        TalentTreeWindow.GridTalent:Hide()
     end
     ShowTypeTalentPoint(tab.TalentType, tab.Id)
     if tab.TalentType == CharacterPointType.TALENT_SKILL_TREE then
         ShowTypeTalentPoint("7", TalentTree.ClassTree)
     end
-    
+
     if TalentTree.FORGE_SELECTED_TAB then
         local previousTabId = TalentTree.FORGE_SELECTED_TAB.Id
         if TalentTreeWindow.TabsLeft.Spec[previousTabId] then
@@ -412,7 +405,7 @@ function SelectTab(tab)
 
     if TalentTree.FORGE_SELECTED_TAB then
         if TalentTreeWindow.TabsLeft.Spec[TalentTree.FORGE_SELECTED_TAB.Id] then
-            TalentTreeWindow.TabsLeft.Spec[TalentTree.FORGE_SELECTED_TAB.Id]:SetButtonState("NORMAL", 1);
+            TalentTreeWindow.TabsLeft.Spec[TalentTree.FORGE_SELECTED_TAB.Id]:SetButtonState("NORMAL", 1)
         end
     end
 
@@ -420,7 +413,8 @@ function SelectTab(tab)
         TalentTreeWindow.TabsLeft.Spec[lastPushedTabId]:SetButtonState("NORMAL", 1)
         local tabIndex = findTabIndexById(lastPushedTabId)
         if tabIndex then
-            local backgroundPath = "Interface\\AddOns\\ForgedWoWCommunication\\UI\\"..TalentTree.FORGE_TABS[tabIndex].Background
+            local backgroundPath =
+                "Interface\\AddOns\\ForgedWoWCommunication\\UI\\" .. TalentTree.FORGE_TABS[tabIndex].Background
             TalentTreeWindow.Container.Background:SetTexture(backgroundPath)
         end
     end
@@ -432,375 +426,442 @@ function SelectTab(tab)
         -- Atualize o fundo e a grade de talentos para o tab selecionado
         local tabIndex = findTabIndexById(tab.Id)
         if tabIndex then
-            local backgroundPath = "Interface\\AddOns\\ForgedWoWCommunication\\UI\\"..TalentTree.FORGE_TABS[tabIndex].Background
+            local backgroundPath =
+                "Interface\\AddOns\\ForgedWoWCommunication\\UI\\" .. TalentTree.FORGE_TABS[tabIndex].Background
             TalentTreeWindow.Container.Background:SetTexture(backgroundPath)
         end
-
     end
-    
-     for _, tab in ipairs(TalentTree.FORGE_TABS) do
+
+    for _, tab in ipairs(TalentTree.FORGE_TABS) do
         UpdateActivateSpecButton(tab)
-     end
+    end
 
     TalentTreeWindow:Show()
     ClassSpecWindow:Hide()
 end
-	 
+
 function GetPointByCharacterPointType(type)
     return TreeCache.Points[type]
 end
 
 function ShowTypeTalentPoint(cpt, tabId)
-    local talent = GetPointByCharacterPointType(tostring(cpt));
-	local tab = FindExistingTab(tabId)
-	local className, classFilename = UnitClass("player");
-        
-	if not tab then
-	  return;
-	end
+    --local talent = GetPointByCharacterPointType(tostring(cpt))
+    local tab = FindExistingTab(tabId)
+    local className, _ = UnitClass("player")
+
+    if not tab then
+        return
+    end
 
     if (cpt == CharacterPointType.CLASS_TREE) then
-        TalentTreeWindow.PointsBottomLeft.Points:SetText(className.." points available\n"..TreeCache.Points[CharacterPointType.CLASS_TREE])
+        TalentTreeWindow.PointsBottomLeft.Points:SetText(
+            className .. " points available\n" .. TreeCache.Points[CharacterPointType.CLASS_TREE]
+        )
     else
-        TalentTreeWindow.PointsBottomRight.Points:SetText(tab.Name.." points available\n"..GetPointByCharacterPointType(cpt))
+        TalentTreeWindow.PointsBottomRight.Points:SetText(
+            tab.Name .. " points available\n" .. GetPointByCharacterPointType(cpt)
+        )
     end
 end
 
 function GetPointSpendByTabId(id)
     for tabId, points in pairs(TalentTree.FORGE_ACTIVE_SPEC.PointsSpent) do
         if tabId == id then
-            return points;
+            return points
         end
     end
 end
 
 function InitializePreviewSpecialization(tabId)
-    TalentTreeWindow.SpecializationPreview = CreateFrame("Frame", TalentTreeWindow.SpecializationPreview,
-        TalentTreeWindow)
-    TalentTreeWindow.SpecializationPreview:SetSize(40, 40);
+    TalentTreeWindow.SpecializationPreview =
+        CreateFrame("Frame", TalentTreeWindow.SpecializationPreview, TalentTreeWindow)
+    TalentTreeWindow.SpecializationPreview:SetSize(40, 40)
 end
+--
 
-		
---[[Navigations HERE]]--
-function InitializeTalentLeft()
+--[[Navigations HERE]] function InitializeTalentLeft()
     if TalentTreeWindow.TabsLeft then
-        return;
+        return
     end
-    TalentTreeWindow.TabsLeft = CreateFrame("Frame", "TalentTreeWindow.TabsLeft", ClassSpecWindow);
-    TalentTreeWindow.TabsLeft:SetFrameLevel(5);
-    TalentTreeWindow.TabsLeft:SetSize(875, 875);
+    TalentTreeWindow.TabsLeft = CreateFrame("Frame", "TalentTreeWindow.TabsLeft", ClassSpecWindow)
+    TalentTreeWindow.TabsLeft:SetFrameLevel(5)
+    TalentTreeWindow.TabsLeft:SetSize(875, 875)
     TalentTreeWindow.TabsLeft:SetPoint("TOPLEFT", -500, 300)
-    TalentTreeWindow.TabsLeft.Spec = {};
-	
-	local TabsCount = #TalentTree.FORGE_TABS
-    
-	if TabsCount <= 2 then
-	   Startx = 192
-	elseif TabsCount == 3 then
-	   Startx = 73;
-	elseif TabsCount >= 4 then
-	   Startx = 10;
-	end
-	
-    for index, tab in ipairs(TalentTree.FORGE_TABS) do
-        local pointsSpent = GetPointSpendByTabId(tab.Id);
-		local ClassName = UnitClass("player");
-		
-				
-        TalentTreeWindow.TabsLeft.Spec[tab.Id] = CreateFrame("Button", "TalentTreeWindow.TabsLeft.Spec"..tab.Id, TalentTreeWindow.TabsLeft);
-        TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetPoint("CENTER", Startx, -265);
-        TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetSize(498, 795);
+    TalentTreeWindow.TabsLeft.Spec = {}
+
+    local TabsCount = #TalentTree.FORGE_TABS
+
+    if TabsCount <= 2 then
+        Startx = 192
+    elseif TabsCount == 3 then
+        Startx = 73
+    elseif TabsCount >= 4 then
+        Startx = 10
+    end
+
+    for _, tab in ipairs(TalentTree.FORGE_TABS) do
+        local pointsSpent = GetPointSpendByTabId(tab.Id)
+        local ClassName = UnitClass("player")
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id] =
+            CreateFrame("Button", "TalentTreeWindow.TabsLeft.Spec" .. tab.Id, TalentTreeWindow.TabsLeft)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetPoint("CENTER", Startx, -265)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetSize(498, 795)
         TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetFrameLevel(5)
 
-		
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Button = CreateFrame("Button", "TalentTreeWindow.TabsLeft.Spec"..tab.Id, TalentTreeWindow.TabsLeft);
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Button:SetPoint("LEFT", Startx, -50);
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Button:SetSize(1, 1);
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Button =
+            CreateFrame("Button", "TalentTreeWindow.TabsLeft.Spec" .. tab.Id, TalentTreeWindow.TabsLeft)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Button:SetPoint("LEFT", Startx, -50)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Button:SetSize(1, 1)
 
-		
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("$parentNormalTexture", "ARTWORK");
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetPoint("CENTER" , 0, 15)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("$parentNormalTexture", "ARTWORK")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetPoint("CENTER", 0, 15)
         TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetTexture(CONSTANTS.UI.SPECIALIZATION_BUTTON)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetVertexColor(0.5, 0.5, 0.5, 1)
-		
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("SetHighlightTexture", "ARTWORK");
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetPoint("CENTER" , 0, 15)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetVertexColor(0.5, 0.5, 0.5, 1)
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("SetHighlightTexture", "ARTWORK")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetPoint("CENTER", 0, 15)
         TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetTexture(CONSTANTS.UI.SPECIALIZATION_BUTTON)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetVertexColor(0.5, 0.5, 0.5, 0.1)
-		
-	    clickInterceptor = CreateFrame("Button", nil, TalentTreeWindow.TabsLeft.Spec[tab.Id])
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetVertexColor(0.5, 0.5, 0.5, 0.1)
+
+        clickInterceptor = CreateFrame("Button", nil, TalentTreeWindow.TabsLeft.Spec[tab.Id])
         clickInterceptor:SetAllPoints(TalentTreeWindow.TabsLeft.Spec[tab.Id])
-		clickInterceptor:EnableMouse(true)
-        clickInterceptor:SetFrameLevel(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetFrameLevel() + 1) 			  
+        clickInterceptor:EnableMouse(true)
+        clickInterceptor:SetFrameLevel(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetFrameLevel() + 1)
 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("SetHighlightTexture", "ARTWORK");
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetPoint("CENTER" , 0, 15)
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetTexture(CONSTANTS.UI.SPECIALIZATION_BUTTON_BG_HOVER_OR_PUSHED)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetAlpha(0.8)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("SetHighlightTexture", "ARTWORK")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetPoint("CENTER", 0, 15)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetTexture(
+            CONSTANTS.UI.SPECIALIZATION_BUTTON_BG_HOVER_OR_PUSHED
+        )
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetAlpha(0.8)
 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].LockedTexture = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("$parentNormalTexture", "ARTWORK");
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LockedTexture =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture("$parentNormalTexture", "ARTWORK")
         TalentTreeWindow.TabsLeft.Spec[tab.Id].LockedTexture:SetTexture(CONSTANTS.UI.SPECIALIZATION_BUTTON_BG_DISABLED)
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].LockedTexture:SetTexCoord(0, 0.625, 0.265625, 0);
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LockedTexture:SetTexCoord(0, 0.625, 0.265625, 0)
 
         TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetNormalTexture(TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal)
         clickInterceptor:SetHighlightTexture(TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted)
         TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetPushedTexture(TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed)
         TalentTreeWindow.TabsLeft.Spec[tab.Id]:SetDisabledTexture(TalentTreeWindow.TabsLeft.Spec[tab.Id].LockedTexture)
 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle = CreateFrame("Frame", TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle, TalentTreeWindow.TabsLeft.Spec[tab.Id]);
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle =
+            CreateFrame("Frame", TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle, TalentTreeWindow.TabsLeft.Spec[tab.Id])
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetPoint("TOP", 0, -30)
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetFrameLevel(10);
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetSize(280, 280);
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetBackdrop({bgFile = CONSTANTS.UI.SPEC_RING});
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetFrameLevel(10)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetSize(280, 280)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:SetBackdrop({bgFile = CONSTANTS.UI.SPEC_RING})
 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot = CreateFrame("Frame", "IconSlot", TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle);
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot =
+            CreateFrame("Frame", "IconSlot", TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle)
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot:SetAllPoints()
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot:SetFrameLevel(9);
-	    
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture = TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot:CreateTexture("$parentNormalTexture", "BACKGROUND");
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture:SetAllPoints();
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\tabBG\\SpecThumbs\\"..ClassName.."_"..tab.Name)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture:SetDrawLayer("BACKGROUND", -1)
-		
-		
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Title = TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateFontString()
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot:SetFrameLevel(9)
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Slot:CreateTexture("$parentNormalTexture", "BACKGROUND")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture:SetAllPoints()
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture:SetTexture(
+            "Interface\\AddOns\\ForgedWoWCommunication\\UI\\tabBG\\SpecThumbs\\" .. ClassName .. "_" .. tab.Name
+        )
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle.Texture:SetDrawLayer("BACKGROUND", -1)
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Title = TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateFontString()
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Title:SetFont("Fonts\\FRIZQT__.TTF", 40, "OUTLINE")
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Title:SetPoint("BOTTOM", 0, 0)
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Title:SetText(tab.Name)
-		
-		SampleTitle = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+
+        SampleTitle = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         SampleTitle:SetFont("Fonts\\FRIZQT__.TTF", 15, "OUTLINE")
-		SampleTitle:SetPoint("BOTTOM", 0, 150)
+        SampleTitle:SetPoint("BOTTOM", 0, 150)
         SampleTitle:SetText("Sample Abilities")
-		SampleTitle:SetTextColor(1, 1, 1, 1)
-				
+        SampleTitle:SetTextColor(1, 1, 1, 1)
 
         --Roles--
         Roles = {
-              ["1"] = {"Damage"},
-			  ["2"] = {"Healer"},
-			  ["3"] = {"Tank"}
-            }
-			
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture = TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateTexture(nil, "ARTWORK")
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\tabBG\\Roles\\"..tab.Role)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetSize(30, 30)
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetPoint("BOTTOM", -40, -40)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetDrawLayer("ARTWORK", 3)
+            ["1"] = {"Damage"},
+            ["2"] = {"Healer"},
+            ["3"] = {"Tank"}
+        }
 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture = TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateTexture(nil, "ARTWORK")
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\DescriptionLine")
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetSize(220, 5)
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetPoint("BOTTOM", TalentTreeWindow.TabsLeft.Spec[tab.Id].Title, "BOTTOM", 0, -60)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetDrawLayer("ARTWORK", 3)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetVertexColor(0.5, 0.5, 0.5)
- 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleText = TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateTexture(nil, "ARTWORK")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetTexture(
+            "Interface\\AddOns\\ForgedWoWCommunication\\UI\\tabBG\\Roles\\" .. tab.Role
+        )
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetSize(30, 30)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetPoint("BOTTOM", -40, -40)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture:SetDrawLayer("ARTWORK", 3)
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateTexture(nil, "ARTWORK")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetTexture(
+            "Interface\\AddOns\\ForgedWoWCommunication\\UI\\DescriptionLine"
+        )
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetSize(220, 5)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetPoint(
+            "BOTTOM",
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Title,
+            "BOTTOM",
+            0,
+            -60
+        )
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetDrawLayer("ARTWORK", 3)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].LineTexture:SetVertexColor(0.5, 0.5, 0.5)
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleText =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleText:SetFont("Fonts\\FRIZQT__.TTF", 15, "OUTLINE")
         TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleText:SetText(Roles[tostring(tab.Role)][1])
-		
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Description = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Description =
+            TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Description:SetFont("Fonts\\FRIZQT__.TTF", 18, "OUTLINE")
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Description:SetText(tab.Description)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].Description:SetWidth(300)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Description:SetText(tab.Description)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].Description:SetWidth(300)
         TalentTreeWindow.TabsLeft.Spec[tab.Id].Description:SetPoint("CENTER", 0, -70)
-        
-		--Sample Spells--
+
+        --Sample Spells--
         local spellIconIds = tab.SpellString
         local PosX = 0
-		local PosY = 80
-		local direction = -1 
+        local PosY = 80
+        local direction = -1
         local count = 0
-		local currentTab 
-        
-	for spellId in string.gmatch(spellIconIds, "%d+") do
-        local texture = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture(nil, "BACKGROUND")
-              texture:SetSize(50, 50)
-              texture:SetPoint("BOTTOM", PosX, PosY)
-              texture:SetDrawLayer("BACKGROUND", -1)
-			  
-			  texture.Circle = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture(nil, "ARTWORK")
-              texture.Circle:SetPoint("CENTER", texture, "CENTER", 0, 0)
-              texture.Circle:SetSize(60, 60);
-              texture.Circle:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\SampleBorder");
-			  texture.Circle:SetDrawLayer("ARTWORK", 1)
-			  
-              local name, rank, icon = GetSpellInfo(tonumber(spellId))
-              SetPortraitToTexture(texture, icon)
+        local currentTab
 
-              local button = CreateFrame("Button", nil, TalentTreeWindow.TabsLeft.Spec[tab.Id])
-                    button:SetSize(50, 50)
-                    button:SetPoint("CENTER", texture, "CENTER", 0, 0)
-					button:SetFrameLevel(clickInterceptor:GetFrameLevel() + 1)
-                    button:SetScript("OnEnter", function(self)
-                      GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                      GameTooltip:SetHyperlink("spell:"..spellId)
-                      GameTooltip:Show()
-                    end)
-                    button:SetScript("OnLeave", function()
-                      GameTooltip:Hide()
-                    end)
-		
-                  if count == 0 then
-                   PosX = 0
-                  else
-                   PosX = 70 * direction * math.ceil(count / 2)
-                   direction = -direction
-                  end
+        for spellId in string.gmatch(spellIconIds, "%d+") do
+            local texture = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture(nil, "BACKGROUND")
+            texture:SetSize(50, 50)
+            texture:SetPoint("BOTTOM", PosX, PosY)
+            texture:SetDrawLayer("BACKGROUND", -1)
 
-                  texture:SetPoint("BOTTOM", PosX, PosY)
-                  button:SetPoint("CENTER", texture, "CENTER", 0, 0)
-                  count = count + 1
-    end
-		
-				
-		local deslocamentoX
-              if tab.Role == "1" then
-                 deslocamentoX = 75
-              elseif tab.Role == "2" then
-                 deslocamentoX = 60 
-              elseif tab.Role == "3" then
-                 deslocamentoX = 48 
-              end
+            texture.Circle = TalentTreeWindow.TabsLeft.Spec[tab.Id]:CreateTexture(nil, "ARTWORK")
+            texture.Circle:SetPoint("CENTER", texture, "CENTER", 0, 0)
+            texture.Circle:SetSize(60, 60)
+            texture.Circle:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\SampleBorder")
+            texture.Circle:SetDrawLayer("ARTWORK", 1)
 
-        function onSpellCast(self, event, unitID, spellName)
+            local _, _, icon = GetSpellInfo(tonumber(spellId))
+            SetPortraitToTexture(texture, icon)
+
+            local button = CreateFrame("Button", nil, TalentTreeWindow.TabsLeft.Spec[tab.Id])
+            button:SetSize(50, 50)
+            button:SetPoint("CENTER", texture, "CENTER", 0, 0)
+            button:SetFrameLevel(clickInterceptor:GetFrameLevel() + 1)
+            button:SetScript(
+                "OnEnter",
+                function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetHyperlink("spell:" .. spellId)
+                    GameTooltip:Show()
+                end
+            )
+            button:SetScript(
+                "OnLeave",
+                function()
+                    GameTooltip:Hide()
+                end
+            )
+
+            if count == 0 then
+                PosX = 0
+            else
+                PosX = 70 * direction * math.ceil(count / 2)
+                direction = -direction
+            end
+
+            texture:SetPoint("BOTTOM", PosX, PosY)
+            button:SetPoint("CENTER", texture, "CENTER", 0, 0)
+            count = count + 1
         end
-		
 
+        local deslocamentoX
+        if tab.Role == "1" then
+            deslocamentoX = 75
+        elseif tab.Role == "2" then
+            deslocamentoX = 60
+        elseif tab.Role == "3" then
+            deslocamentoX = 48
+        end
 
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleText:SetPoint("RIGHT", TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture, "RIGHT", deslocamentoX, 0)
-		
-		
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn = CreateFrame("Button", "ActivateSpecButton", TalentTreeWindow.TabsLeft.Spec[tab.Id], "UIPanelButtonTemplate")
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetSize(130, 25)  -- Ajuste o tamanho conforme necessário
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleText:SetPoint(
+            "RIGHT",
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].RoleTexture,
+            "RIGHT",
+            deslocamentoX,
+            0
+        )
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn =
+            CreateFrame("Button", "ActivateSpecButton", TalentTreeWindow.TabsLeft.Spec[tab.Id], "UIPanelButtonTemplate")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetSize(130, 25) -- Ajuste o tamanho conforme necessário
         TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetPoint("BOTTOM", 0, 30)
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetText("Activate")
-		TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetFrameLevel(clickInterceptor:GetFrameLevel() + 1)
-		
-		local ButtonState = TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:GetButtonState()		
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetScript("OnClick", function(self)
-          currentTab = tab
-          ActivateSpec(currentTab.Id)
-		  
-		  if ButtonState == "NORMAL" then
-		  ClassSpecWindow.Lockout:Show()
-		  end
-		  
-        end)
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetText("Activate")
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetFrameLevel(clickInterceptor:GetFrameLevel() + 1)
 
-		
-        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetScript("OnUpdate", function(self, elapsed)
-          local playerLevel = UnitLevel("player")
+        local ButtonState = TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:GetButtonState()
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetScript(
+            "OnClick",
+            function(self)
+                currentTab = tab
+                ActivateSpec(currentTab.Id)
 
-          if playerLevel < 10 then
-             self:Disable()
-          else
-             self:Enable()
-          end
-        end)
+                if ButtonState == "NORMAL" then
+                    ClassSpecWindow.Lockout:Show()
+                end
+            end
+        )
+
+        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetScript(
+            "OnUpdate",
+            function(self, _)
+                local playerLevel = UnitLevel("player")
+
+                if playerLevel < 10 then
+                    self:Disable()
+                else
+                    self:Enable()
+                end
+            end
+        )
 
         local eventFrame = CreateFrame("Frame")
-              eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-              eventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-              eventFrame:SetScript("OnEvent", function(self, event, unitID, spellName)
+        eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+        eventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+        eventFrame:SetScript(
+            "OnEvent",
+            function(_, event, unitID, spellName)
                 if unitID == "player" then
-                  if event == "UNIT_SPELLCAST_SUCCEEDED" and spellName == "Activate Primary Spec" and currentTab then
-                    SelectTab(currentTab)
-                    currentTab = nil
-                  elseif event == "UNIT_SPELLCAST_INTERRUPTED" and currentTab then
-				  ClassSpecWindow.Lockout:Hide()
-				  TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetButtonState("NORMAL")
-                    currentTab = nil
-                  end
+                    if event == "UNIT_SPELLCAST_SUCCEEDED" and spellName == "Activate Primary Spec" and currentTab then
+                        SelectTab(currentTab)
+                        currentTab = nil
+                    elseif event == "UNIT_SPELLCAST_INTERRUPTED" and currentTab then
+                        ClassSpecWindow.Lockout:Hide()
+                        TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn:SetButtonState("NORMAL")
+                        currentTab = nil
+                    end
                 end
-              end)
-			 
-				
+            end
+        )
+
         if tab.TalentType ~= CharacterPointType.SKILL_PAGE then
-            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points = CreateFrame("Button",
-            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points, TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle);
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points =
+                CreateFrame(
+                "Button",
+                TalentTreeWindow.TabsLeft.Spec[tab.Id].Points,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id].Circle
+            )
             TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetPoint("TOPRIGHT", 0, -40)
-            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetFrameLevel(12);
-            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetSize(20, 20);
-            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetBackdrop({
-                bgFile = CONSTANTS.UI.RING_POINTS
-            });
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetFrameLevel(12)
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetSize(20, 20)
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:SetBackdrop(
+                {
+                    bgFile = CONSTANTS.UI.RING_POINTS
+                }
+            )
             TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text =
-                TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:CreateFontString();
+                TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:CreateFontString()
             TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text:SetFont("Fonts\\FRIZQT__.TTF", 9, "OUTLINE")
             TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text:SetPoint("CENTER", 0, 0)
-            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text:SetText("0");
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text:SetText("0")
             if pointsSpent then
-                TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text:SetText(pointsSpent);
+                TalentTreeWindow.TabsLeft.Spec[tab.Id].Points.Text:SetText(pointsSpent)
             end
-			
-			TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:Hide()
-        end
 
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].Points:Hide()
+        end
 
         if TabsCount <= 2 then
-           Startx = Startx + 710
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 410, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 410, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 410, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	
+            Startx = Startx + 710
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 410,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 410,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 410,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
         elseif TabsCount == 3 then
-           Startx = Startx + 472
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 103, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 103, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 103, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
+            Startx = Startx + 472
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 103,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 103,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() + 103,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
         elseif TabsCount >= 4 then
-           Startx = Startx + 355
-           TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() - 50, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() - 50, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
-	       TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetSize(TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() - 50, TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180)
+            Startx = Startx + 355
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureNormal:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() - 50,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TextureHighligted:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() - 50,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
+            TalentTreeWindow.TabsLeft.Spec[tab.Id].TexturePushed:SetSize(
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetWidth() - 50,
+                TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetHeight() + 180
+            )
         end
-		
     end
 end
 
-
 function InitializeForgePoints()
     if TalentTreeWindow.PointsBottomRight then
-        return;
+        return
     end
-	
-	if TalentTreeWindow.PointsBottomLeft then
-        return;
+
+    if TalentTreeWindow.PointsBottomLeft then
+        return
     end
-	
-    TalentTreeWindow.PointsBottomRight = CreateFrame("Frame", "TalentPoints", TalentTreeWindow);
-    TalentTreeWindow.PointsBottomRight:SetSize(100, 100);
-    TalentTreeWindow.PointsBottomRight:SetFrameLevel(2000);
-    TalentTreeWindow.PointsBottomRight:SetPoint("CENTER", -370, -55);
+
+    TalentTreeWindow.PointsBottomRight = CreateFrame("Frame", "TalentPoints", TalentTreeWindow)
+    TalentTreeWindow.PointsBottomRight:SetSize(100, 100)
+    TalentTreeWindow.PointsBottomRight:SetFrameLevel(2000)
+    TalentTreeWindow.PointsBottomRight:SetPoint("CENTER", -370, -55)
     TalentTreeWindow.PointsBottomRight.Points = TalentTreeWindow:CreateFontString()
     TalentTreeWindow.PointsBottomRight.Points:SetFont("Fonts\\FRIZQT__.TTF", 15, "OUTLINE")
     TalentTreeWindow.PointsBottomRight.Points:SetPoint("TOPRIGHT", -70, -35)
-	
-	TalentTreeWindow.PointsBottomLeft = CreateFrame("Frame", "TalentPoints", TalentTreeWindow);
-    TalentTreeWindow.PointsBottomLeft:SetSize(100, 100);
-    TalentTreeWindow.PointsBottomLeft:SetFrameLevel(2000);
-    TalentTreeWindow.PointsBottomLeft:SetPoint("CENTER", -370, -55);
+
+    TalentTreeWindow.PointsBottomLeft = CreateFrame("Frame", "TalentPoints", TalentTreeWindow)
+    TalentTreeWindow.PointsBottomLeft:SetSize(100, 100)
+    TalentTreeWindow.PointsBottomLeft:SetFrameLevel(2000)
+    TalentTreeWindow.PointsBottomLeft:SetPoint("CENTER", -370, -55)
     TalentTreeWindow.PointsBottomLeft.Points = TalentTreeWindow:CreateFontString()
     TalentTreeWindow.PointsBottomLeft.Points:SetFont("Fonts\\FRIZQT__.TTF", 15, "OUTLINE")
     TalentTreeWindow.PointsBottomLeft.Points:SetPoint("TOPLEFT", -20, -35)
-	
 end
 
 function InitializeProgressionBar()
     if not TalentTreeWindow.ProgressBarPlaceholder then
-        TalentTreeWindow.ProgressBarPlaceholder = CreateFrame("Button", TalentTreeWindow.ProgressBarPlaceholder,
-            TalentTreeWindow);
+        TalentTreeWindow.ProgressBarPlaceholder =
+            CreateFrame("Button", TalentTreeWindow.ProgressBarPlaceholder, TalentTreeWindow)
     end
-    TalentTreeWindow.ProgressBarPlaceholder:SetSize(0, 0);
-    TalentTreeWindow.ProgressBarPlaceholder:SetFrameLevel(11);
+    TalentTreeWindow.ProgressBarPlaceholder:SetSize(0, 0)
+    TalentTreeWindow.ProgressBarPlaceholder:SetFrameLevel(11)
     TalentTreeWindow.ProgressBarPlaceholder:SetPoint("CENTER", 150.5, -528.5)
-    TalentTreeWindow.ProgressBarPlaceholder:SetBackdrop({
-        bgFile = CONSTANTS.UI.EMPTY_PROGRESS_BAR
-    });
-    local talent = GetPointByCharacterPointType(1);
-    local progression = 0;
-    local total = 0;
+    TalentTreeWindow.ProgressBarPlaceholder:SetBackdrop(
+        {
+            bgFile = CONSTANTS.UI.EMPTY_PROGRESS_BAR
+        }
+    )
+    local talent = GetPointByCharacterPointType(1)
+    local progression = 0
+    local total = 0
     if talent then
         total = tonumber(talent.Earned)
         local percentage = tonumber(talent.Earned) / tonumber(talent.MaxPoints) * 100
@@ -808,16 +869,18 @@ function InitializeProgressionBar()
     end
 
     if not TalentTreeWindow.ProgressBarPlaceholder.Progression then
-        TalentTreeWindow.ProgressBarPlaceholder.Progression = CreateFrame("Frame",
-            TalentTreeWindow.ProgressBarPlaceholder, TalentTreeWindow);
-        TalentTreeWindow.ProgressBarPlaceholder.Progression:SetFrameLevel(10);
+        TalentTreeWindow.ProgressBarPlaceholder.Progression =
+            CreateFrame("Frame", TalentTreeWindow.ProgressBarPlaceholder, TalentTreeWindow)
+        TalentTreeWindow.ProgressBarPlaceholder.Progression:SetFrameLevel(10)
         TalentTreeWindow.ProgressBarPlaceholder.Progression:SetPoint("LEFT", 0, 0)
-        TalentTreeWindow.ProgressBarPlaceholder.Progression:SetBackdrop({
-            bgFile = CONSTANTS.UI.COLORED_PROGRESS_BAR
-        });
+        TalentTreeWindow.ProgressBarPlaceholder.Progression:SetBackdrop(
+            {
+                bgFile = CONSTANTS.UI.COLORED_PROGRESS_BAR
+            }
+        )
     end
 
-    TalentTreeWindow.ProgressBarPlaceholder.Progression:SetSize(progression, 0);
+    TalentTreeWindow.ProgressBarPlaceholder.Progression:SetSize(progression, 0)
 
     if not TalentTreeWindow.ProgressBarPlaceholder.Text then
         TalentTreeWindow.ProgressBarPlaceholder.Text = TalentTreeWindow.ProgressBarPlaceholder:CreateFontString()
@@ -827,94 +890,110 @@ function InitializeProgressionBar()
 
     TalentTreeWindow.ProgressBarPlaceholder.Text:SetText(total .. " / " .. talent.MaxPoints)
 end
+--
 
---[[Talents HERE]]--
-function InitializeGridForTalent()
+--[[Talents HERE]] function InitializeGridForTalent()
     if TalentTreeWindow.GridTalent then
-        TalentTreeWindow.GridTalent:Hide();
+        TalentTreeWindow.GridTalent:Hide()
     end
 
-    TalentTreeWindow.GridTalent = CreateFrame("Frame", nil, TalentTreeWindow.Container);
-    TalentTreeWindow.GridTalent:SetAllPoints();
+    TalentTreeWindow.GridTalent = CreateFrame("Frame", nil, TalentTreeWindow.Container)
+    TalentTreeWindow.GridTalent:SetAllPoints()
 
     if not TalentTreeWindow.GridTalent.Talents then
-        TalentTreeWindow.GridTalent.Talents = {};
+        TalentTreeWindow.GridTalent.Talents = {}
     end
 
-    local visualizationSize = 30;
-    local spaceBetweenNodes = 30; 
-    local gridRows = 30;
-    local totalGridCols = 21;
-	local MaxColumns = 17;
+    local visualizationSize = 30
+    local spaceBetweenNodes = 30
+    local gridRows = 30
+    local totalGridCols = 21
+    --local MaxColumns = 17
 
     for i = 0, gridRows - 1 do
         if not TalentTreeWindow.GridTalent.Talents[i] then
-            TalentTreeWindow.GridTalent.Talents[i] = {};
+            TalentTreeWindow.GridTalent.Talents[i] = {}
         end
 
         for j = 0, totalGridCols - 1 do
             -- Ajustando a lógica de determinação da árvore
-            local tree;
-            local basePosX, basePosY = -580, -320;
+            --local tree
+            local basePosX, basePosY = -580, -320
 
             -- Posições de X e Y
-            local posX, posY;
-            posX = basePosX + (j * (visualizationSize + spaceBetweenNodes));
-            posY = basePosY + (i * (visualizationSize + spaceBetweenNodes));
+            local posX, posY
+            posX = basePosX + (j * (visualizationSize + spaceBetweenNodes))
+            posY = basePosY + (i * (visualizationSize + spaceBetweenNodes))
 
             if not TalentTreeWindow.GridTalent.Talents[i][j] then
-                    TalentTreeWindow.GridTalent.Talents[i][j] = CreateFrame("Button", nil, TalentTreeWindow.GridTalent);
-                    TalentTreeWindow.GridTalent.Talents[i][j]:SetPoint("CENTER", posX, posY);
-                    TalentTreeWindow.GridTalent.Talents[i][j]:SetFrameLevel(9);
-                    TalentTreeWindow.GridTalent.Talents[i][j]:SetSize(visualizationSize, visualizationSize);
-					TalentTreeWindow.GridTalent.Talents[i][j]:SetPoint("CENTER", posX, -posY); -- Usando posY aqui				
+                TalentTreeWindow.GridTalent.Talents[i][j] = CreateFrame("Button", nil, TalentTreeWindow.GridTalent)
+                TalentTreeWindow.GridTalent.Talents[i][j]:SetPoint("CENTER", posX, posY)
+                TalentTreeWindow.GridTalent.Talents[i][j]:SetFrameLevel(9)
+                TalentTreeWindow.GridTalent.Talents[i][j]:SetSize(visualizationSize, visualizationSize)
+                TalentTreeWindow.GridTalent.Talents[i][j]:SetPoint("CENTER", posX, -posY) -- Usando posY aqui
 
-                    TalentTreeWindow.GridTalent.Talents[i][j].TextureIcon = TalentTreeWindow.GridTalent.Talents[i][j]:CreateTexture(nil, "ARTWORK");
-                    TalentTreeWindow.GridTalent.Talents[i][j].TextureIcon:SetAllPoints()
+                TalentTreeWindow.GridTalent.Talents[i][j].TextureIcon =
+                    TalentTreeWindow.GridTalent.Talents[i][j]:CreateTexture(nil, "ARTWORK")
+                TalentTreeWindow.GridTalent.Talents[i][j].TextureIcon:SetAllPoints()
 
-           
-                    TalentTreeWindow.GridTalent.Talents[i][j].Border = CreateFrame("Frame",
-                    TalentTreeWindow.GridTalent.Talents[i][j].Border, TalentTreeWindow.GridTalent.Talents[i][j])
-                    TalentTreeWindow.GridTalent.Talents[i][j].Border:SetFrameLevel(10);
-                    TalentTreeWindow.GridTalent.Talents[i][j].Border:SetPoint("CENTER", -2, 0);
-                    TalentTreeWindow.GridTalent.Talents[i][j].Border:SetSize(75, 75)
-			
-			        TalentTreeWindow.GridTalent.Talents[i][j].Border.texture = TalentTreeWindow.GridTalent.Talents[i][j].Border:CreateTexture(nil, "ARTWORK")
-			        TalentTreeWindow.GridTalent.Talents[i][j].Border.texture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\Talents_DF.blp") 
-                    TalentTreeWindow.GridTalent.Talents[i][j].Border.texture:SetAllPoints(true)
-					
-                    TalentTreeWindow.GridTalent.Talents[i][j].Ranks = CreateFrame("Frame", nil, TalentTreeWindow.GridTalent.Talents[i][j]);
-                    TalentTreeWindow.GridTalent.Talents[i][j].Ranks:SetFrameLevel(13);
-                    TalentTreeWindow.GridTalent.Talents[i][j].Ranks:SetPoint("BOTTOM", 0, -12);
-                    TalentTreeWindow.GridTalent.Talents[i][j].Ranks:SetSize(32, 26);
-                    TalentTreeWindow.GridTalent.Talents[i][j].RankText = TalentTreeWindow.GridTalent.Talents[i][j].Ranks:CreateFontString(nil, "OVERLAY", "GameFontNormal");
-                    TalentTreeWindow.GridTalent.Talents[i][j].RankText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE");
-                    TalentTreeWindow.GridTalent.Talents[i][j].RankText:SetPoint("CENTER", 10, 8.5);
+                TalentTreeWindow.GridTalent.Talents[i][j].Border =
+                    CreateFrame(
+                    "Frame",
+                    TalentTreeWindow.GridTalent.Talents[i][j].Border,
+                    TalentTreeWindow.GridTalent.Talents[i][j]
+                )
+                TalentTreeWindow.GridTalent.Talents[i][j].Border:SetFrameLevel(10)
+                TalentTreeWindow.GridTalent.Talents[i][j].Border:SetPoint("CENTER", -2, 0)
+                TalentTreeWindow.GridTalent.Talents[i][j].Border:SetSize(75, 75)
 
-					TalentTreeWindow.GridTalent.Talents[i][j].node = {};
-                    TalentTreeWindow.GridTalent.Talents[i][j]:Hide();
-                end
+                TalentTreeWindow.GridTalent.Talents[i][j].Border.texture =
+                    TalentTreeWindow.GridTalent.Talents[i][j].Border:CreateTexture(nil, "ARTWORK")
+                TalentTreeWindow.GridTalent.Talents[i][j].Border.texture:SetTexture(
+                    "Interface\\AddOns\\ForgedWoWCommunication\\UI\\Talents_DF.blp"
+                )
+                TalentTreeWindow.GridTalent.Talents[i][j].Border.texture:SetAllPoints(true)
+
+                TalentTreeWindow.GridTalent.Talents[i][j].Ranks =
+                    CreateFrame("Frame", nil, TalentTreeWindow.GridTalent.Talents[i][j])
+                TalentTreeWindow.GridTalent.Talents[i][j].Ranks:SetFrameLevel(13)
+                TalentTreeWindow.GridTalent.Talents[i][j].Ranks:SetPoint("BOTTOM", 0, -12)
+                TalentTreeWindow.GridTalent.Talents[i][j].Ranks:SetSize(32, 26)
+                TalentTreeWindow.GridTalent.Talents[i][j].RankText =
+                    TalentTreeWindow.GridTalent.Talents[i][j].Ranks:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                TalentTreeWindow.GridTalent.Talents[i][j].RankText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
+                TalentTreeWindow.GridTalent.Talents[i][j].RankText:SetPoint("CENTER", 10, 8.5)
+
+                TalentTreeWindow.GridTalent.Talents[i][j].node = {}
+                TalentTreeWindow.GridTalent.Talents[i][j]:Hide()
             end
         end
     end
-	
+end
+
 function FindPreReq(spells, spellId)
     for _, spell in pairs(spells) do
         if tonumber(spell.SpellId) == spellId then
-            return spell;
+            return spell
         end
     end
 end
 
 function InitializePreReqAndDrawNodes(spells, spellNode, children, parent, offset, CurrentRank)
     for _, pr in pairs(spellNode.Prereqs) do
-        local previousSpell = FindPreReq(spells, tonumber(pr.Talent));
-        local startPosition = GetPositionXY(children[tonumber(previousSpell.ColumnIndex)][tonumber(
-            previousSpell.RowIndex)]);
-        local endPosition = GetPositionXY(children[tonumber(spellNode.ColumnIndex)][tonumber(spellNode.RowIndex)]);
-        DrawNode(endPosition, startPosition,
-            children[tonumber(previousSpell.ColumnIndex)][tonumber(previousSpell.RowIndex)], parent, offset, spellNode,
-            CurrentRank, previousSpell);
+        local previousSpell = FindPreReq(spells, tonumber(pr.Talent))
+        local startPosition =
+            GetPositionXY(children[tonumber(previousSpell.ColumnIndex)][tonumber(previousSpell.RowIndex)])
+        local endPosition = GetPositionXY(children[tonumber(spellNode.ColumnIndex)][tonumber(spellNode.RowIndex)])
+        DrawNode(
+            endPosition,
+            startPosition,
+            children[tonumber(previousSpell.ColumnIndex)][tonumber(previousSpell.RowIndex)],
+            parent,
+            offset,
+            spellNode,
+            CurrentRank,
+            previousSpell
+        )
     end
 end
 
@@ -922,62 +1001,62 @@ function ActivateSpec(tabId)
     PushForgeMessage(ForgeTopic.ACTIVATE_CLASS_SPEC, tabId)
 end
 
-
 function CreateTooltip(spell, SpellId, NextSpellId, parent, CurrentRank)
     if (SpellId == nil) then
         return
     end
-    FirstRankToolTip:SetOwner(parent, "ANCHOR_RIGHT");
-    SecondRankToolTip:SetOwner(FirstRankToolTip, "ANCHOR_BOTTOM");
-    FirstRankToolTip:SetHyperlink('spell:' .. SpellId);
+    FirstRankToolTip:SetOwner(parent, "ANCHOR_RIGHT")
+    SecondRankToolTip:SetOwner(FirstRankToolTip, "ANCHOR_BOTTOM")
+    FirstRankToolTip:SetHyperlink("spell:" .. SpellId)
 
     if tonumber(spell.RankCost) > 0 and (CurrentRank < tonumber(spell.NumberOfRanks)) then
-        FirstRankToolTip:AddLine("Rank cost: " .. spell.RankCost, 1, 1, 1);
-        FirstRankToolTip:AddLine("Required Level: " .. spell.RequiredLevel, 1, 1, 1);
-		FirstRankToolTip:AddLine("Dev: (SpellID): " .. spell.SpellId, 1, 1, 1);
+        FirstRankToolTip:AddLine("Rank cost: " .. spell.RankCost, 1, 1, 1)
+        FirstRankToolTip:AddLine("Required Level: " .. spell.RequiredLevel, 1, 1, 1)
+        FirstRankToolTip:AddLine("Dev: (SpellID): " .. spell.SpellId, 1, 1, 1)
     end
     if not NextSpellId and tonumber(spell.RankCost) > 0 and (CurrentRank < tonumber(spell.NumberOfRanks)) then
         FirstRankToolTip:SetSize(FirstRankToolTip:GetWidth(), FirstRankToolTip:GetHeight() + 40) --28 default
     end
     if NextSpellId then
-        FirstRankToolTip:AddLine("Next rank:", 1, 1, 1);
-        SecondRankToolTip:SetHyperlink('spell:' .. NextSpellId);
-        SecondRankToolTip:SetBackdropBorderColor(0, 0, 0, 0);
-        SecondRankToolTip:SetBackdropColor(0, 0, 0, 0);
+        FirstRankToolTip:AddLine("Next rank:", 1, 1, 1)
+        SecondRankToolTip:SetHyperlink("spell:" .. NextSpellId)
+        SecondRankToolTip:SetBackdropBorderColor(0, 0, 0, 0)
+        SecondRankToolTip:SetBackdropColor(0, 0, 0, 0)
         SecondRankToolTip:AddLine(" ")
 
-        SecondRankToolTip:SetPoint("TOP", FirstRankToolTip, "TOP", 0, -(FirstRankToolTip:GetHeight() + 25));
-        FirstRankToolTip:SetSize(FirstRankToolTip:GetWidth(),
-        FirstRankToolTip:GetHeight() + SecondRankToolTip:GetHeight() + 30)
-			
+        SecondRankToolTip:SetPoint("TOP", FirstRankToolTip, "TOP", 0, -(FirstRankToolTip:GetHeight() + 25))
+        FirstRankToolTip:SetSize(
+            FirstRankToolTip:GetWidth(),
+            FirstRankToolTip:GetHeight() + SecondRankToolTip:GetHeight() + 30
+        )
     end
 end
 
-function GetSpellIdAndNextRank(tabId, spell)
-    local NextSpellId;
-    local SpellId;
-    local CurrentRank = 0;
-    local SpellIdToFind = tostring(spell.SpellId)
-   -- CurrentRank = tonumber(TalentTree.FORGE_TALENTS[tabId][SpellIdToFind]);
+function GetSpellIdAndNextRank(_, spell) --tabId, spell
+    local NextSpellId
+    local SpellId
+    local CurrentRank = 0
+    --local SpellIdToFind = tostring(spell.SpellId)
+    -- CurrentRank = tonumber(TalentTree.FORGE_TALENTS[tabId][SpellIdToFind]);
     if CurrentRank == -1 or CurrentRank == 0 then
-        SpellId = tonumber(spell.Ranks["1"]);
+        SpellId = tonumber(spell.Ranks["1"])
     else
-        SpellId = tonumber(spell.Ranks[tostring(CurrentRank)]);
-        NextSpellId = tonumber(spell.Ranks[tostring(CurrentRank + 1)]);
+        SpellId = tonumber(spell.Ranks[tostring(CurrentRank)])
+        NextSpellId = tonumber(spell.Ranks[tostring(CurrentRank + 1)])
     end
-    return CurrentRank, SpellId, NextSpellId;
+    return CurrentRank, SpellId, NextSpellId
 end
 
-function IsUnlocked(CurrentRank, NumberOfRanks, NextSpellId)
+function IsUnlocked(CurrentRank, NumberOfRanks, _) --nextSpellId
     if tonumber(NumberOfRanks) == 1 and tonumber(CurrentRank) == 1 then
-        return tonumber(CurrentRank) == tonumber(NumberOfRanks);
+        return tonumber(CurrentRank) == tonumber(NumberOfRanks)
     end
     if tonumber(NumberOfRanks) > 1 then
-        return tonumber(CurrentRank) == tonumber(NumberOfRanks);
+        return tonumber(CurrentRank) == tonumber(NumberOfRanks)
     end
 end
 
-local mouseOverButton = false  -- Controla se o mouse está sobre um botão
+local mouseOverButton = false -- Controla se o mouse está sobre um botão
 
 local function IsMouseOverFrame(frame, margin)
     margin = margin or 0
@@ -988,47 +1067,54 @@ local function IsMouseOverFrame(frame, margin)
     x = x / scale
     y = y / scale
 
-    return x > (left - margin) and x < (left + width + margin) and y > (bottom - margin) and y < (bottom + height + margin)
+    return x > (left - margin) and x < (left + width + margin) and y > (bottom - margin) and
+        y < (bottom + height + margin)
 end
 -- Função para adicionar eventos nos botões
-local function AddButtonEvents(button)
-    button:SetScript("OnEnter", function()
-        mouseOverButton = true
-    end)
+-- local function AddButtonEvents(button)
+--     button:SetScript(
+--         "OnEnter",
+--         function()
+--             mouseOverButton = true
+--         end
+--     )
 
-    button:SetScript("OnLeave", function()
-        mouseOverButton = false
-    end)
-end
+--     button:SetScript(
+--         "OnLeave",
+--         function()
+--             mouseOverButton = false
+--         end
+--     )
+-- end
 
 function InitializeViewFromGrid(children, spells, tabId)
     if TalentTreeWindow.GridTalent then
-        TalentTreeWindow.GridTalent:Hide();
+        TalentTreeWindow.GridTalent:Hide()
     end
 
-    for index, spell in pairs(spells) do
-        local CurrentRank, SpellId, NextSpellId = GetSpellIdAndNextRank(tabId, spell);
-        local name, rank, icon, castTime, minRange, maxRange, spellID = GetSpellInfo(spell.SpellId)
-        local ColumnIndex = tonumber(spell.ColumnIndex);
-        local RowIndex = tonumber(spell.RowIndex)-1;
-        local NumberOfRanks = tonumber(spell.NumberOfRanks);
+    for _, spell in pairs(spells) do
+        local CurrentRank, SpellId, NextSpellId = GetSpellIdAndNextRank(tabId, spell)
+        local _, _, icon = GetSpellInfo(spell.SpellId)
+        local ColumnIndex = tonumber(spell.ColumnIndex)
+        local RowIndex = tonumber(spell.RowIndex) - 1
+        local NumberOfRanks = tonumber(spell.NumberOfRanks)
         local tab = FindExistingTab(tabId)
 
         -- if tab.Id ~= GetClassTree(UnitClass("player")) then
         --     ColumnIndex = ColumnIndex + 11
         -- end
 
-        local frame = children.Talents[RowIndex][ColumnIndex];
-    
+        local frame = children.Talents[RowIndex][ColumnIndex]
+
         if not TreeCache.IndexToFrame[tabId][spell.nodeIndex] then
-            TreeCache.IndexToFrame[tabId][spell.nodeIndex] = { row = RowIndex, col = ColumnIndex }
+            TreeCache.IndexToFrame[tabId][spell.nodeIndex] = {row = RowIndex, col = ColumnIndex}
         end
         if not TreeCache.Spells[tabId][spell.nodeIndex] then
-            TreeCache.Spells[tabId][spell.nodeIndex] = 0; 
+            TreeCache.Spells[tabId][spell.nodeIndex] = 0
         end
 
         if not frame then
-            return;
+            return
         end
 
         frame.CanUprank = false
@@ -1046,435 +1132,476 @@ function InitializeViewFromGrid(children, spells, tabId)
         TreeCache.TotalInvests[spell.TabPointReq] = 0
 
         local Choice_Talents = CreateFrame("Frame", "Choice_Talents", TalentFrame)
-              Choice_Talents:SetSize(200, 100)  
-              Choice_Talents:SetPoint("CENTER")
-              Choice_Talents:Hide()
-            
+        Choice_Talents:SetSize(200, 100)
+        Choice_Talents:SetPoint("CENTER")
+        Choice_Talents:Hide()
+
         if spell.Prereqs then
             InitializePreReqAndDrawNodes(spells, spell, children.Talents, children, offset, CurrentRank)
         end
-        frame.Init = true;
+        frame.Init = true
         if NumberOfRanks == 0 then
-            frame:SetSize(38, 38);
-            frame.Ranks:Hide();
-            frame.Border:Hide();
-            frame.TextureIcon:SetTexture(icon);
+            frame:SetSize(38, 38)
+            frame.Ranks:Hide()
+            frame.Border:Hide()
+            frame.TextureIcon:SetTexture(icon)
         else
+            frame:SetScript(
+                "OnEnter",
+                function()
+                    if spell.nodeType <= 1 then
+                        CreateTooltip(spell, SpellId, NextSpellId, frame, CurrentRank)
+                        frame.IsTooltipActive = true
+                    end
 
-    frame:SetScript("OnEnter", function()
+                    if spell.nodeType == 2 then
+                        Choice_Talents:SetParent(frame)
+                        Choice_Talents:SetFrameLevel(200)
+                        Choice_Talents:SetFrameStrata("FULLSCREEN")
+                        Choice_Talents:ClearAllPoints()
+                        Choice_Talents:SetPoint("CENTER", frame, "CENTER")
 
-         if spell.nodeType <= 1 then            
-            CreateTooltip(spell, SpellId, NextSpellId, frame, CurrentRank)
-            frame.IsTooltipActive = true
-         end
+                        Choice_Talents.buttons = Choice_Talents.buttons or {}
 
-    if spell.nodeType == 2 then
-        Choice_Talents:SetParent(frame)
-        Choice_Talents:SetFrameLevel(200)
-        Choice_Talents:SetFrameStrata("FULLSCREEN")
-        Choice_Talents:ClearAllPoints()
-        Choice_Talents:SetPoint("CENTER", frame, "CENTER")
+                        for i, choiceSpellId in ipairs(spell.Choices or {}) do
+                            local button = Choice_Talents.buttons[i]
+                            if not button then
+                                button = CreateFrame("Button", nil, Choice_Talents)
+                                button:SetSize(50, 50)
+                                Choice_Talents.buttons[i] = button
 
-        Choice_Talents.buttons = Choice_Talents.buttons or {}
+                                local texture = button:CreateTexture(nil, "BACKGROUND")
+                                texture:SetAllPoints(button)
+                                button.texture = texture
 
-       for i, choiceSpellId in ipairs(spell.Choices or {}) do
-          local button = Choice_Talents.buttons[i]
-                if not button then
-                       button = CreateFrame("Button", nil, Choice_Talents)
-                       button:SetSize(50, 50)
-                       Choice_Talents.buttons[i] = button
+                                local Bordertexture = button:CreateTexture(nil, "ARTWORK")
+                                Bordertexture:SetPoint("CENTER", 0, 2)
+                                Bordertexture:SetSize(button:GetWidth() * 1.7, button:GetHeight() * 1.7)
+                                button.textureBorder = Bordertexture
+                                Bordertexture:SetTexture(
+                                    "Interface\\AddOns\\ForgedWoWCommunication\\UI\\Talents_DF.blp"
+                                )
+                                Bordertexture:SetTexCoord(0.5, 0.5625, 0.125, 0.1875)
+                                Bordertexture:SetVertexColor(1, 1, 0, 1)
+                            end
 
-                local texture = button:CreateTexture(nil, "BACKGROUND")
-                      texture:SetAllPoints(button)
-                      button.texture = texture
-                
-                local Bordertexture = button:CreateTexture(nil, "ARTWORK")
-                      Bordertexture:SetPoint("CENTER", 0, 2)
-                      Bordertexture:SetSize(button:GetWidth() * 1.7, button:GetHeight() * 1.7)
-                      button.textureBorder = Bordertexture
-                      Bordertexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\Talents_DF.blp") 
-                      Bordertexture:SetTexCoord(0.5, 0.5625, 0.125, 0.1875)
-                      Bordertexture:SetVertexColor(1, 1, 0, 1)
+                            local _, _, spellIcon = GetSpellInfo(choiceSpellId)
+                            --button.texture:SetTexture(spellIcon)
+                            SetPortraitToTexture(button.texture, spellIcon)
+                            button:SetPoint(
+                                "CENTER",
+                                Choice_Talents,
+                                "CENTER",
+                                ((i - 1) * 60) - (30 * (#spell.Choices - 1)),
+                                0
+                            )
+                            button:Show()
+
+                            -- Adicionando o tooltip
+                            button:SetScript(
+                                "OnEnter",
+                                function(self)
+                                    CreateTooltip(spell, choiceSpellId, NextSpellId, self, CurrentRank) -- Substitua NextSpellId e CurrentRank se necessário
+                                    self.IsTooltipActive = true
+                                end
+                            )
+
+                            button:SetScript(
+                                "OnLeave",
+                                function(self)
+                                    self.IsTooltipActive = false
+                                end
+                            )
+
+                            Choice_Talents:SetScript(
+                                "OnHide",
+                                function(self)
+                                    frame.IsTooltipActive = false
+                                    firstRankToolTip:Hide()
+                                end
+                            )
+                        end
+
+                        Choice_Talents:Show()
+                    end
+                end
+            )
+
+            frame:SetScript(
+                "OnLeave",
+                function()
+                    FirstRankToolTip:Hide()
+                    SecondRankToolTip:Hide()
+                    frame.IsTooltipActive = false
+                    Choice_Talents:Hide()
+                end
+            )
+
+            frame.RankText:SetText(CurrentRankSpell(CurrentRank))
+            frame:RegisterForClicks("AnyDown")
+            frame:SetScript(
+                "OnMouseDown",
+                function(_, button)
+                    if spell.nodeType < 2 then
+                        local spellRank = TreeCache.Spells[tabId][spell.nodeIndex]
+                        local change = false
+
+                        if (button == "LeftButton" and frame.CanUprank) then
+                            if TreeCache.Spells[tabId][spell.nodeIndex] < NumberOfRanks then
+                                TreeCache.Spells[tabId][spell.nodeIndex] = spellRank + 1
+                                TreeCache.PointsSpent[tab.Id] = TreeCache.PointsSpent[tab.Id] + spell.RankCost
+                                TreeCache.Investments[tab.Id][spell.TabPointReq] =
+                                    TreeCache.Investments[tab.Id][spell.TabPointReq] + spell.RankCost
+
+                                --print("Spell IDs in Cache:", table.concat(spellIds, ", "))  -- Imprime todos os IDs em uma linha
+                                CurrentRank = TreeCache.Spells[tabId][spell.nodeIndex]
+
+                                TreeCache.PrereqUnlocks[tabId][spell.SpellId] = CurrentRank
+                                TreeCache.PrereqRev[spell.SpellId] = {}
+                                if #spell.Prereqs > 0 then
+                                    for _, req in ipairs(spell.Prereqs) do
+                                        if
+                                            TreeCache.PrereqRev[req.Talent] and
+                                                tonumber(req.RequiredRank) <=
+                                                    TreeCache.PrereqUnlocks[req.TalentTabId][req.Talent]
+                                         then
+                                            TreeCache.PrereqRev[req.Talent][spell.SpellId] = true
+                                        end
+                                    end
+                                end
+
+                                TreeCache.Points[tab.TalentType] = TreeCache.Points[tab.TalentType] - spell.RankCost
+
+                                change = true
+                            end
+                        elseif (button ~= "LeftButton" and frame.CanDerank) then
+                            if TreeCache.Spells[tabId][spell.nodeIndex] > 0 then
+                                TreeCache.Spells[tabId][spell.nodeIndex] = spellRank - 1
+
+                                TreeCache.PointsSpent[tab.Id] = TreeCache.PointsSpent[tab.Id] - spell.RankCost
+                                TreeCache.Investments[tab.Id][spell.TabPointReq] =
+                                    TreeCache.Investments[tab.Id][spell.TabPointReq] - spell.RankCost
+
+                                CurrentRank = TreeCache.Spells[tabId][spell.nodeIndex]
+                                TreeCache.PrereqUnlocks[tabId][spell.SpellId] = CurrentRank
+
+                                if #spell.Prereqs > 0 then
+                                    for _, req in ipairs(spell.Prereqs) do
+                                        if
+                                            TreeCache.PrereqRev[req.Talent] and
+                                                TreeCache.Spells[tabId][spell.nodeIndex] < 1
+                                         then
+                                            TreeCache.PrereqRev[req.Talent][spell.SpellId] = nil
+                                        end
+                                    end
+                                end
+
+                                TreeCache.Points[tab.TalentType] = TreeCache.Points[tab.TalentType] + spell.RankCost
+
+                                change = true
+                            end
+                        end
+
+                        if change then
+                            local cumulative = 0
+                            for i = 0, 50, 5 do
+                                local value = TreeCache.Investments[tab.Id][i]
+                                if value then
+                                    cumulative = cumulative + value
+                                    TreeCache.TotalInvests[i] = cumulative
+                                --print(i.." : "..value.." "..cumulative)
+                                end
+                            end
+
+                            frame.update = true
+                            frame.RankText:SetText(TreeCache.Spells[tabId][spell.nodeIndex])
+                            ShowTypeTalentPoint(tab.TalentType, tabId)
+                        end
+                    end
+                    --print(dump(TreeCache.Investments))
+                    --print(dump(TreeCache.PrereqRev))
+                    --print(dump(TreeCache.PrereqUnlocks))
+                    -- Aqui você pode adicionar qualquer outra lógica necessária para outros tipos de nodeType
+                end
+            )
         end
 
-    local spellName, _, spellIcon = GetSpellInfo(choiceSpellId)
-    --button.texture:SetTexture(spellIcon)
-    SetPortraitToTexture(button.texture, spellIcon)
-    button:SetPoint("CENTER", Choice_Talents, "CENTER", ((i - 1) * 60) - (30 * (#spell.Choices - 1)), 0)
-    button:Show()
+        function UpdateRanks()
+        end
 
-    -- Adicionando o tooltip
-    button:SetScript("OnEnter", function(self)
-        CreateTooltip(spell, choiceSpellId, NextSpellId, self, CurrentRank)  -- Substitua NextSpellId e CurrentRank se necessário
-        self.IsTooltipActive = true
-    end)
+        frame:SetScript(
+            "OnUpdate",
+            function()
+                local next = next
+                local allow = false
+                if frame.update then
+                    if TreeCache.Spells[tabId][spell.nodeIndex] > 0 then
+                        local nextReq = spell.TabPointReq + 5
+                        local spentAfter = {}
+                        for i = nextReq, 50, 5 do
+                            if TreeCache.Investments[tab.Id][i] then
+                                if TreeCache.Investments[tab.Id][i] > 0 then
+                                    table.insert(spentAfter, i)
+                                end
+                            end
+                        end
 
-    button:SetScript("OnLeave", function(self)
-        self.IsTooltipActive = false
-    end)
-    
-    Choice_Talents:SetScript("OnHide", function(self)
-       frame.IsTooltipActive = false;
-       firstRankToolTip:Hide()
-     end)
-end
-
-Choice_Talents:Show()
-    end
-
-end)
-
-            frame:SetScript("OnLeave", function()
-                FirstRankToolTip:Hide();
-                SecondRankToolTip:Hide();
-                frame.IsTooltipActive = false;
-				Choice_Talents:Hide()
-            end)
-		
-
-
-frame.RankText:SetText(CurrentRankSpell(CurrentRank))
-frame:RegisterForClicks("AnyDown");
-frame:SetScript("OnMouseDown", function(self, button)
-    if spell.nodeType < 2 then
-        local spellRank = TreeCache.Spells[tabId][spell.nodeIndex];
-        local change = false
-
-        if (button == 'LeftButton' and frame.CanUprank) then
-            if TreeCache.Spells[tabId][spell.nodeIndex] < NumberOfRanks then
-                TreeCache.Spells[tabId][spell.nodeIndex] = spellRank + 1
-                TreeCache.PointsSpent[tab.Id] = TreeCache.PointsSpent[tab.Id] + spell.RankCost
-                TreeCache.Investments[tab.Id][spell.TabPointReq] = TreeCache.Investments[tab.Id][spell.TabPointReq] + spell.RankCost
-
-                --print("Spell IDs in Cache:", table.concat(spellIds, ", "))  -- Imprime todos os IDs em uma linha
-                CurrentRank = TreeCache.Spells[tabId][spell.nodeIndex]
-
-                TreeCache.PrereqUnlocks[tabId][spell.SpellId] = CurrentRank
-                TreeCache.PrereqRev[spell.SpellId] = {}
-                if #spell.Prereqs > 0 then
-                    for _, req in ipairs(spell.Prereqs) do
-                        if TreeCache.PrereqRev[req.Talent] and tonumber(req.RequiredRank) <= TreeCache.PrereqUnlocks[req.TalentTabId][req.Talent] then
-                            TreeCache.PrereqRev[req.Talent][spell.SpellId] = true
+                        if (#spentAfter > 0) then
+                            --print(dump(spentAfter))
+                            for _, tier in ipairs(spentAfter) do
+                                if TreeCache.TotalInvests[tier - 5] then
+                                    if tier > TreeCache.TotalInvests[tier - 5] - 1 then
+                                        allow = true
+                                    end
+                                end
+                            end
                         end
                     end
                 end
-
-                TreeCache.Points[tab.TalentType] = TreeCache.Points[tab.TalentType] - spell.RankCost
-
-                change = true
-            end
-        elseif (button ~= 'LeftButton' and frame.CanDerank) then
-            if TreeCache.Spells[tabId][spell.nodeIndex] > 0 then
-                TreeCache.Spells[tabId][spell.nodeIndex] = spellRank - 1
-
-                TreeCache.PointsSpent[tab.Id] = TreeCache.PointsSpent[tab.Id] - spell.RankCost
-                TreeCache.Investments[tab.Id][spell.TabPointReq] = TreeCache.Investments[tab.Id][spell.TabPointReq] - spell.RankCost
-
-                CurrentRank = TreeCache.Spells[tabId][spell.nodeIndex]
-                TreeCache.PrereqUnlocks[tabId][spell.SpellId] = CurrentRank
-
-                if #spell.Prereqs > 0 then
-                    for _, req in ipairs(spell.Prereqs) do
-                        if TreeCache.PrereqRev[req.Talent] and TreeCache.Spells[tabId][spell.nodeIndex] < 1 then
-                            TreeCache.PrereqRev[req.Talent][spell.SpellId] = nil
-                        end
+                if TreeCache.PrereqRev[spell.SpellId] then
+                    if next(TreeCache.PrereqRev[spell.SpellId]) then
+                        allow = true
                     end
                 end
+                frame.CanDerank = not allow
 
-                TreeCache.Points[tab.TalentType] = TreeCache.Points[tab.TalentType] + spell.RankCost
-
-                change = true
-            end
-        end
-
-        if change then
-            local cumulative = 0
-            for i = 0, 50, 5 do
-                local value = TreeCache.Investments[tab.Id][i]
-                if value then
-                    cumulative = cumulative + value
-                    TreeCache.TotalInvests[i] = cumulative
-                    --print(i.." : "..value.." "..cumulative)
-                end
-            end
-
-            frame.update = true
-            frame.RankText:SetText(TreeCache.Spells[tabId][spell.nodeIndex])
-            ShowTypeTalentPoint(tab.TalentType, tabId)
-        end
-    end
-    --print(dump(TreeCache.Investments))
-    --print(dump(TreeCache.PrereqRev))
-    --print(dump(TreeCache.PrereqUnlocks))
-    -- Aqui você pode adicionar qualquer outra lógica necessária para outros tipos de nodeType
-end)
-end
-
-function UpdateRanks()
-
-end
-
-frame:SetScript("OnUpdate", function()
-    local next = next
-    local allow = false
-    if frame.update then
-        if TreeCache.Spells[tabId][spell.nodeIndex] > 0 then
-            local nextReq = spell.TabPointReq + 5
-            local spentAfter = {}
-            for i = nextReq, 50, 5 do
-                if TreeCache.Investments[tab.Id][i] then
-                    if TreeCache.Investments[tab.Id][i] > 0 then
-                        table.insert(spentAfter, i);
-                    end
-                end
-            end
-
-            if (#spentAfter > 0) then
-                --print(dump(spentAfter))
-                for _, tier in ipairs(spentAfter) do
-                    if TreeCache.TotalInvests[tier-5] then
-                        if tier > TreeCache.TotalInvests[tier-5]-1 then
-                            allow = true
-                        end
-                    end
-                end
-            end
-        end
-    end
-    if TreeCache.PrereqRev[spell.SpellId] then
-        if next(TreeCache.PrereqRev[spell.SpellId]) then
-            allow = true
-        end
-    end
-    frame.CanDerank = not allow
-
-    
-    if spell.nodeType == 2 then
-        if not IsMouseOverFrame(frame, 25) and not mouseOverButton then
-            Choice_Talents:Hide()
-        else
-            Choice_Talents:Show()
-        end
-    end
-	
-    if spell.nodeType == 2 and spell.Choices then
-        -- Checando se algum dos feitiços foi aprendido
-        local spellLearned
-        for _, choiceSpellId in ipairs(spell.Choices or {}) do
-            if IsSpellKnown(tonumber(choiceSpellId)) or CurrentRank > 0 then
-                spellLearned = choiceSpellId
-                break
-            end
-        end
-
-        if spellLearned then
-            -- Obtendo a textura do feitiço aprendido
-            local _, _, spellIcon = GetSpellInfo(spellLearned)
-            frame.TextureIcon:SetTexture(spellIcon)
-			frame.TextureIcon:ClearAllPoints()
-			frame.TextureIcon:SetSize(33.5, 33.5)
-            frame.TextureIcon:SetPoint("CENTER", frame.Border, "CENTER", 2, 1)
-            frame.TextureIconLeft:Hide()
-            frame.TextureIconRight:Hide()
-			frame.Border.texture:SetTexCoord(0, 0.125, 0.25, 0.375)
-			frame.Border.texture:SetVertexColor(1, 1, 0, 1)
-			frame.RankText:SetText("1")
-        else
-            frame.RankText:SetText("0")
-            frame.TextureIconLeft:Show()
-            frame.TextureIconRight:Show()
-        end
-    end
-	
-    if CurrentRank <= 0 then
-	   frame.Border.texture:SetVertexColor(0, 1, 0, 1)
-	elseif spellLearned then
-	   frame.Border.texture:SetVertexColor(1, 1, 0, 1)
-	end
-
-    if next(spell.Prereqs) then
-        for _, prereq in ipairs(spell.Prereqs) do
-            if TreeCache.PrereqUnlocks[prereq.TalentTabId] then
-                local reqUnlocked = TreeCache.PrereqUnlocks[prereq.TalentTabId][prereq.Talent]
-                if reqUnlocked then
-                    --print(dump(reqUnlocked))
-                    if tonumber(reqUnlocked) >= tonumber(prereq.RequiredRank) then
-                        frame.reqsMet = true
+                if spell.nodeType == 2 then
+                    if not IsMouseOverFrame(frame, 25) and not mouseOverButton then
+                        Choice_Talents:Hide()
                     else
-                        frame.reqsMet = false
+                        Choice_Talents:Show()
+                    end
+                end
+
+                if spell.nodeType == 2 and spell.Choices then
+                    -- Checando se algum dos feitiços foi aprendido
+                    local spellLearned
+                    for _, choiceSpellId in ipairs(spell.Choices or {}) do
+                        if IsSpellKnown(tonumber(choiceSpellId)) or CurrentRank > 0 then
+                            spellLearned = choiceSpellId
+                            break
+                        end
+                    end
+
+                    if spellLearned then
+                        -- Obtendo a textura do feitiço aprendido
+                        local _, _, spellIcon = GetSpellInfo(spellLearned)
+                        frame.TextureIcon:SetTexture(spellIcon)
+                        frame.TextureIcon:ClearAllPoints()
+                        frame.TextureIcon:SetSize(33.5, 33.5)
+                        frame.TextureIcon:SetPoint("CENTER", frame.Border, "CENTER", 2, 1)
+                        frame.TextureIconLeft:Hide()
+                        frame.TextureIconRight:Hide()
+                        frame.Border.texture:SetTexCoord(0, 0.125, 0.25, 0.375)
+                        frame.Border.texture:SetVertexColor(1, 1, 0, 1)
+                        frame.RankText:SetText("1")
+                    else
+                        frame.RankText:SetText("0")
+                        frame.TextureIconLeft:Show()
+                        frame.TextureIconRight:Show()
+                    end
+                end
+
+                if CurrentRank <= 0 then
+                    frame.Border.texture:SetVertexColor(0, 1, 0, 1)
+                elseif spellLearned then
+                    frame.Border.texture:SetVertexColor(1, 1, 0, 1)
+                end
+
+                if next(spell.Prereqs) then
+                    for _, prereq in ipairs(spell.Prereqs) do
+                        if TreeCache.PrereqUnlocks[prereq.TalentTabId] then
+                            local reqUnlocked = TreeCache.PrereqUnlocks[prereq.TalentTabId][prereq.Talent]
+                            if reqUnlocked then
+                                --print(dump(reqUnlocked))
+                                if tonumber(reqUnlocked) >= tonumber(prereq.RequiredRank) then
+                                    frame.reqsMet = true
+                                else
+                                    frame.reqsMet = false
+                                end
+                            else
+                                frame.reqsMet = false
+                            end
+                        else
+                            frame.reqsMet = false
+                        end
                     end
                 else
-                    frame.reqsMet = false
+                    frame.reqsMet = true
                 end
-            else
-                frame.reqsMet = false
+
+                if
+                    (tonumber(TreeCache.Points[tab.TalentType]) < tonumber(spell.RankCost) or
+                        TreeCache.PointsSpent[tabId] < spell.TabPointReq or
+                        UnitLevel("player") < tonumber(spell.RequiredLevel) or
+                        not frame.reqsMet)
+                 then
+                    -- Aplica o efeito cinza se o spellID não estiver na SpellCache
+                    if (tonumber(spell.NumberOfRanks) > TreeCache.Spells[tabId][spell.nodeIndex]) then
+                        frame.TextureIcon:SetDesaturated(true)
+                        if frame.Border and frame.Border.texture then
+                            frame.Border.texture:SetDesaturated(true)
+                        end
+                    end
+                    frame.CanUprank = false
+                else
+                    -- Remove o efeito cinza se o spellID estiver na SpellCache
+                    frame.TextureIcon:SetDesaturated(false)
+                    if frame.Border and frame.Border.texture then
+                        frame.Border.texture:SetDesaturated(false)
+                    end
+                    frame.CanUprank = true
+                end
             end
-        end
-    else
-        frame.reqsMet = true
-    end
+        )
 
-    if (tonumber(TreeCache.Points[tab.TalentType]) < tonumber(spell.RankCost) or TreeCache.PointsSpent[tabId] < spell.TabPointReq or UnitLevel("player") < tonumber(spell.RequiredLevel) or not frame.reqsMet) then
-        -- Aplica o efeito cinza se o spellID não estiver na SpellCache
-        if (tonumber(spell.NumberOfRanks) > TreeCache.Spells[tabId][spell.nodeIndex]) then
-            frame.TextureIcon:SetDesaturated(true)
-            if frame.Border and frame.Border.texture then
-                frame.Border.texture:SetDesaturated(true)
-            end
-        end
-        frame.CanUprank = false
-    else
-        -- Remove o efeito cinza se o spellID estiver na SpellCache
-        frame.TextureIcon:SetDesaturated(false)
-        if frame.Border and frame.Border.texture then
-            frame.Border.texture:SetDesaturated(false)
-        end
-        frame.CanUprank = true
-    end
-end)
-
-		   
-   if spell.nodeType == 0 then
-   SetPortraitToTexture(frame.TextureIcon, icon)
-   frame.Border.texture:ClearAllPoints()
-   frame.Border.texture:SetPoint("CENTER", frame.Border, "CENTER", 2, 2)
-   frame.Border.texture:SetSize(60, 60)
-   frame.TextureIcon:ClearAllPoints()
-   frame.TextureIcon:SetPoint("CENTER", frame.Border, "CENTER")
-   frame.TextureIcon:SetSize(35, 35)
-   elseif spell.nodeType == 1 then
-   frame.TextureIcon:SetTexture(icon)
-   frame.Border.texture:ClearAllPoints()
-   frame.Border.texture:SetPoint("CENTER", frame.Border, "CENTER", 2, -3)
-   frame.Border.texture:SetSize(59, 59)
-   end
-		   
-    if spell.nodeType == 2 and spell.Choices then
-        --print(dump(spell.Choices))
-        if #spell.Choices >= 2 then
-            local spellId1, spellId2 = spell.Choices[1], spell.Choices[2]
-            local _, _, texturePath1 = GetSpellInfo(spellId1)
-            local _, _, texturePath2 = GetSpellInfo(spellId2)
-
-            if not texturePath1 or not texturePath2 then
-                print("Erro: Uma das texturas não foi encontrada.")
-                return
-            end
-
-            -- Certifique-se de que as texturas da esquerda e direita foram criadas
-            frame.TextureIconLeft = frame.TextureIconLeft or frame:CreateTexture(nil, "ARTWORK")
-            frame.TextureIconRight = frame.TextureIconRight or frame:CreateTexture(nil, "ARTWORK")
-
-            --frame.TextureIconLeft:SetTexture(texturePath1)
-            --frame.TextureIconRight:SetTexture(texturePath2)
-
-            -- Define o tamanho e a posição das texturas
-            local iconSize = frame.TextureIcon:GetWidth() + 10 -- Presumindo que TextureIcon é quadrado
-            frame.TextureIconLeft:SetSize(iconSize / 2, iconSize + 1)
-            frame.TextureIconLeft:SetPoint("LEFT", frame.TextureIcon, "LEFT", -2, 2)
-            frame.TextureIconLeft:SetTexCoord(0, 0.5, 0, 1)  -- Metade esquerda da primeira textura
-
-            frame.TextureIconRight:SetSize(iconSize / 2, iconSize)
-            frame.TextureIconRight:SetPoint("LEFT", frame.TextureIconLeft, "RIGHT", 0, 0)
-            frame.TextureIconRight:SetTexCoord(0.5, 1, 0, 1)  -- Metade direita da segunda textura
-
-            -- Ajustes finais
+        if spell.nodeType == 0 then
+            SetPortraitToTexture(frame.TextureIcon, icon)
             frame.Border.texture:ClearAllPoints()
-            frame.Border.texture:SetPoint("CENTER", frame.Border, "CENTER", 0.5, 0.5)
-            frame.Border.texture:SetSize(66, 66)
-            
-            SetPortraitToTexture(frame.TextureIconLeft, texturePath1)
-            SetPortraitToTexture(frame.TextureIconRight, texturePath2)
+            frame.Border.texture:SetPoint("CENTER", frame.Border, "CENTER", 2, 2)
+            frame.Border.texture:SetSize(60, 60)
+            frame.TextureIcon:ClearAllPoints()
+            frame.TextureIcon:SetPoint("CENTER", frame.Border, "CENTER")
+            frame.TextureIcon:SetSize(35, 35)
+        elseif spell.nodeType == 1 then
+            frame.TextureIcon:SetTexture(icon)
+            frame.Border.texture:ClearAllPoints()
+            frame.Border.texture:SetPoint("CENTER", frame.Border, "CENTER", 2, -3)
+            frame.Border.texture:SetSize(59, 59)
         end
-    end
-		
+
+        if spell.nodeType == 2 and spell.Choices then
+            --print(dump(spell.Choices))
+            if #spell.Choices >= 2 then
+                local spellId1, spellId2 = spell.Choices[1], spell.Choices[2]
+                local _, _, texturePath1 = GetSpellInfo(spellId1)
+                local _, _, texturePath2 = GetSpellInfo(spellId2)
+
+                if not texturePath1 or not texturePath2 then
+                    print("Erro: Uma das texturas não foi encontrada.")
+                    return
+                end
+
+                -- Certifique-se de que as texturas da esquerda e direita foram criadas
+                frame.TextureIconLeft = frame.TextureIconLeft or frame:CreateTexture(nil, "ARTWORK")
+                frame.TextureIconRight = frame.TextureIconRight or frame:CreateTexture(nil, "ARTWORK")
+
+                --frame.TextureIconLeft:SetTexture(texturePath1)
+                --frame.TextureIconRight:SetTexture(texturePath2)
+
+                -- Define o tamanho e a posição das texturas
+                local iconSize = frame.TextureIcon:GetWidth() + 10 -- Presumindo que TextureIcon é quadrado
+                frame.TextureIconLeft:SetSize(iconSize / 2, iconSize + 1)
+                frame.TextureIconLeft:SetPoint("LEFT", frame.TextureIcon, "LEFT", -2, 2)
+                frame.TextureIconLeft:SetTexCoord(0, 0.5, 0, 1) -- Metade esquerda da primeira textura
+
+                frame.TextureIconRight:SetSize(iconSize / 2, iconSize)
+                frame.TextureIconRight:SetPoint("LEFT", frame.TextureIconLeft, "RIGHT", 0, 0)
+                frame.TextureIconRight:SetTexCoord(0.5, 1, 0, 1) -- Metade direita da segunda textura
+
+                -- Ajustes finais
+                frame.Border.texture:ClearAllPoints()
+                frame.Border.texture:SetPoint("CENTER", frame.Border, "CENTER", 0.5, 0.5)
+                frame.Border.texture:SetSize(66, 66)
+
+                SetPortraitToTexture(frame.TextureIconLeft, texturePath1)
+                SetPortraitToTexture(frame.TextureIconRight, texturePath2)
+            end
+        end
+
         local TextureSettings = {
-          [0] = {
-                desaturate = false, 
+            [0] = {
+                desaturate = false,
                 coords = {0.5, 0.5625, 0.125, 0.1875}
-                },
-          [1] = {
-                desaturate = false, 
+            },
+            [1] = {
+                desaturate = false,
                 coords = {0.125, 0.25, 0.625, 0.75}
-                },
-	      [2] = {
-                desaturate = false, 
+            },
+            [2] = {
+                desaturate = false,
                 coords = {0, 0.125, 0.625, 0.75}
-                }
+            }
         }
 
         local settings = TextureSettings[spell.nodeType]
 
+        if settings then
+            frame.TextureIcon:SetDesaturated(settings.desaturate)
+            frame.Border.texture:SetTexCoord(unpack(settings.coords))
+        end
 
-
-if settings then
-    frame.TextureIcon:SetDesaturated(settings.desaturate)
-    frame.Border.texture:SetTexCoord(unpack(settings.coords))
-end
-  
-        frame:Show();
+        frame:Show()
     end
 end
 
 function CurrentRankSpell(CurrentRank)
     if CurrentRank == "-1" or CurrentRank == -1 then
-        return 0;
+        return 0
     end
-    return CurrentRank;
+    return CurrentRank
 end
 
 function InitializeMiddleSpell()
     if TalentTreeWindow.GridForgeSkill.Talents and TalentTreeWindow.GridForgeSkill.Talents[11][5].Ranks then
-        TalentTreeWindow.GridForgeSkill.Talents[11][5]:SetSize(40, 40);
-        TalentTreeWindow.GridForgeSkill.Talents[11][5].Ranks:Hide();
+        TalentTreeWindow.GridForgeSkill.Talents[11][5]:SetSize(40, 40)
+        TalentTreeWindow.GridForgeSkill.Talents[11][5].Ranks:Hide()
     end
 end
 
 function InitializeGridForForgeSkills()
     if TalentTreeWindow.GridForgeSkill then
-        TalentTreeWindow.GridForgeSkill:Hide();
+        TalentTreeWindow.GridForgeSkill:Hide()
     end
-    TalentTreeWindow.GridForgeSkill = CreateFrame("Frame", TalentTreeWindow.GridForgeSkill, TalentTreeWindow.Container);
-    TalentTreeWindow.GridForgeSkill:SetPoint("LEFT", -375, 25);
-    TalentTreeWindow.GridForgeSkill:SetSize(946, 946);
-    TalentTreeWindow.GridForgeSkill.Talents = {};
-    TalentTreeWindow.GridForgeSkill:Hide();
-    local posX = 0;
+    TalentTreeWindow.GridForgeSkill = CreateFrame("Frame", TalentTreeWindow.GridForgeSkill, TalentTreeWindow.Container)
+    TalentTreeWindow.GridForgeSkill:SetPoint("LEFT", -375, 25)
+    TalentTreeWindow.GridForgeSkill:SetSize(946, 946)
+    TalentTreeWindow.GridForgeSkill.Talents = {}
+    TalentTreeWindow.GridForgeSkill:Hide()
+    local posX = 0
     for i = 1, 20 do
-        TalentTreeWindow.GridForgeSkill.Talents[i] = {};
-        local posY = 0;
+        TalentTreeWindow.GridForgeSkill.Talents[i] = {}
+        local posY = 0
         for j = 1, 9 do
-            TalentTreeWindow.GridForgeSkill.Talents[i][j] = CreateFrame("Button",
-                TalentTreeWindow.GridForgeSkill.Talents[i][j], TalentTreeWindow.GridForgeSkill);
+            TalentTreeWindow.GridForgeSkill.Talents[i][j] =
+                CreateFrame("Button", TalentTreeWindow.GridForgeSkill.Talents[i][j], TalentTreeWindow.GridForgeSkill)
             TalentTreeWindow.GridForgeSkill.Talents[i][j]:SetPoint("CENTER", posX, posY)
-            TalentTreeWindow.GridForgeSkill.Talents[i][j]:SetFrameLevel(9);
-            TalentTreeWindow.GridForgeSkill.Talents[i][j]:SetSize(30, 30);
+            TalentTreeWindow.GridForgeSkill.Talents[i][j]:SetFrameLevel(9)
+            TalentTreeWindow.GridForgeSkill.Talents[i][j]:SetSize(30, 30)
             TalentTreeWindow.GridForgeSkill.Talents[i][j].TextureIcon =
-            TalentTreeWindow.GridForgeSkill.Talents[i][j]:CreateTexture();
+                TalentTreeWindow.GridForgeSkill.Talents[i][j]:CreateTexture()
             TalentTreeWindow.GridForgeSkill.Talents[i][j].TextureIcon:SetAllPoints()
 
             TalentTreeWindow.GridForgeSkill.Talents[i][j].Border =
-            CreateFrame("Frame", TalentTreeWindow.GridForgeSkill.Talents[i][j].Border,
-            TalentTreeWindow.GridForgeSkill.Talents[i][j])
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Border:SetFrameLevel(10);
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Border:SetPoint("CENTER", 0, 0);
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Border:SetSize(48, 48);
+                CreateFrame(
+                "Frame",
+                TalentTreeWindow.GridForgeSkill.Talents[i][j].Border,
+                TalentTreeWindow.GridForgeSkill.Talents[i][j]
+            )
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Border:SetFrameLevel(10)
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Border:SetPoint("CENTER", 0, 0)
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Border:SetSize(48, 48)
 
             TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks =
-                CreateFrame("Frame", TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks,
-                    TalentTreeWindow.GridForgeSkill.Talents[i][j]);
+                CreateFrame(
+                "Frame",
+                TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks,
+                TalentTreeWindow.GridForgeSkill.Talents[i][j]
+            )
 
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetFrameLevel(1001);
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetPoint("BOTTOM", 0, -12);
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetSize(32, 26);
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetBackdrop({
-                bgFile = PATH .. "rank_placeholder"
-            })
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetFrameLevel(1001)
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetPoint("BOTTOM", 0, -12)
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetSize(32, 26)
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:SetBackdrop(
+                {
+                    bgFile = PATH .. "rank_placeholder"
+                }
+            )
             TalentTreeWindow.GridForgeSkill.Talents[i][j].RankText =
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:CreateFontString()
+                TalentTreeWindow.GridForgeSkill.Talents[i][j].Ranks:CreateFontString()
             TalentTreeWindow.GridForgeSkill.Talents[i][j].RankText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
             TalentTreeWindow.GridForgeSkill.Talents[i][j].RankText:SetPoint("BOTTOM", 0, 8.5)
-            TalentTreeWindow.GridForgeSkill.Talents[i][j].node = {};
+            TalentTreeWindow.GridForgeSkill.Talents[i][j].node = {}
             TalentTreeWindow.GridForgeSkill.Talents[i][j]:Hide()
             posY = posY + 40
         end
@@ -1483,18 +1610,20 @@ function InitializeGridForForgeSkills()
 end
 
 function HideForgeSkills()
-    InitializeGridForForgeSkills();
-    TalentTreeWindow.GridForgeSkill:Hide();
-    TalentTreeWindow.Container.CloseButtonForgeSkills:Hide();
-    TalentTreeWindow.SpellBook:Show();
-    TalentTreeWindow.TabsLeft:Show();
-    TalentTreeWindow.Container:SetBackdrop({
-        bgFile = CONSTANTS.UI.DEFAULT_BOOK
-    })
+    InitializeGridForForgeSkills()
+    TalentTreeWindow.GridForgeSkill:Hide()
+    TalentTreeWindow.Container.CloseButtonForgeSkills:Hide()
+    TalentTreeWindow.SpellBook:Show()
+    TalentTreeWindow.TabsLeft:Show()
+    TalentTreeWindow.Container:SetBackdrop(
+        {
+            bgFile = CONSTANTS.UI.DEFAULT_BOOK
+        }
+    )
 end
 
 function IsForgeSkillFrameActive()
-    return TalentTreeWindow.GridForgeSkill:IsShown();
+    return TalentTreeWindow.GridForgeSkill:IsShown()
 end
 
 -- function ShowForgeSkill(tab)
@@ -1613,66 +1742,73 @@ end
 function switchPage(nextPage)
     if nextPage then
         if TalentTree.FORGE_CURRENT_PAGE + 1 > TalentTree.FORGE_MAX_PAGE then
-            return;
+            return
         end
-        TalentTree.FORGE_CURRENT_PAGE = TalentTree.FORGE_CURRENT_PAGE + 1;
+        TalentTree.FORGE_CURRENT_PAGE = TalentTree.FORGE_CURRENT_PAGE + 1
     else
         if TalentTree.FORGE_CURRENT_PAGE - 1 < 1 then
-            return;
+            return
         end
-        TalentTree.FORGE_CURRENT_PAGE = TalentTree.FORGE_CURRENT_PAGE - 1;
+        TalentTree.FORGE_CURRENT_PAGE = TalentTree.FORGE_CURRENT_PAGE - 1
     end
-    local page = TalentTree.FORGE_SPELLS_PAGES[TalentTree.FORGE_CURRENT_PAGE];
+    local page = TalentTree.FORGE_SPELLS_PAGES[TalentTree.FORGE_CURRENT_PAGE]
     if page == nil then
-        return;
+        return
     end
     if (TalentTree.FORGE_CURRENT_PAGE - 1) <= 0 then
-        TalentTreeWindow.SpellBook.PreviousArrow:Disable();
+        TalentTreeWindow.SpellBook.PreviousArrow:Disable()
     else
-        TalentTreeWindow.SpellBook.PreviousArrow:Enable();
+        TalentTreeWindow.SpellBook.PreviousArrow:Enable()
     end
 
     if TalentTree.FORGE_CURRENT_PAGE == TalentTree.FORGE_MAX_PAGE then
-        TalentTreeWindow.SpellBook.NextArrow:Disable();
+        TalentTreeWindow.SpellBook.NextArrow:Disable()
     else
-        TalentTreeWindow.SpellBook.NextArrow:Enable();
+        TalentTreeWindow.SpellBook.NextArrow:Enable()
     end
-    ShowSpellsToForge(page);
+    ShowSpellsToForge(page)
 end
 
 function InitializeTabForSpellsToForge(SkillToForges)
-    TalentTreeWindow.SpellBook = CreateFrame("Frame", TalentTreeWindow.SpellBook, TalentTreeWindow);
-    TalentTreeWindow.SpellBook:SetPoint("CENTER", 120, 330);
-    TalentTreeWindow.SpellBook:SetSize(800, 600);
-    TalentTreeWindow.SpellBook.Spells = {};
-    TalentTreeWindow.SpellBook:Hide();
-    TalentTreeWindow.SpellBook.NextArrow = CreateFrame("Button", TalentTreeWindow.SpellBook.NextArrow,
-        TalentTreeWindow.SpellBook);
+    TalentTreeWindow.SpellBook = CreateFrame("Frame", TalentTreeWindow.SpellBook, TalentTreeWindow)
+    TalentTreeWindow.SpellBook:SetPoint("CENTER", 120, 330)
+    TalentTreeWindow.SpellBook:SetSize(800, 600)
+    TalentTreeWindow.SpellBook.Spells = {}
+    TalentTreeWindow.SpellBook:Hide()
+    TalentTreeWindow.SpellBook.NextArrow =
+        CreateFrame("Button", TalentTreeWindow.SpellBook.NextArrow, TalentTreeWindow.SpellBook)
     TalentTreeWindow.SpellBook.NextArrow:SetNormalTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
     TalentTreeWindow.SpellBook.NextArrow:SetPushedTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Down")
     TalentTreeWindow.SpellBook.NextArrow:SetDisabledTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Disabled")
-    TalentTreeWindow.SpellBook.NextArrow:SetPoint("BOTTOMRIGHT", -100, -40);
-    TalentTreeWindow.SpellBook.NextArrow:SetFrameLevel(1000);
-    TalentTreeWindow.SpellBook.NextArrow:SetSize(32, 32);
+    TalentTreeWindow.SpellBook.NextArrow:SetPoint("BOTTOMRIGHT", -100, -40)
+    TalentTreeWindow.SpellBook.NextArrow:SetFrameLevel(1000)
+    TalentTreeWindow.SpellBook.NextArrow:SetSize(32, 32)
     TalentTreeWindow.SpellBook.NextArrow:SetText("Next page")
-    TalentTreeWindow.SpellBook.NextArrow:SetScript("OnClick", function()
-        switchPage(true);
-    end)
-    TalentTreeWindow.SpellBook.PreviousArrow = CreateFrame("Button", TalentTreeWindow.SpellBook.NextArrow,
-        TalentTreeWindow.SpellBook);
+    TalentTreeWindow.SpellBook.NextArrow:SetScript(
+        "OnClick",
+        function()
+            switchPage(true)
+        end
+    )
+    TalentTreeWindow.SpellBook.PreviousArrow =
+        CreateFrame("Button", TalentTreeWindow.SpellBook.NextArrow, TalentTreeWindow.SpellBook)
 
     TalentTreeWindow.SpellBook.PreviousArrow:SetNormalTexture("Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Up")
     TalentTreeWindow.SpellBook.PreviousArrow:SetPushedTexture("Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Down")
-    TalentTreeWindow.SpellBook.PreviousArrow:SetDisabledTexture("Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Disabled")
-    TalentTreeWindow.SpellBook.PreviousArrow:SetPoint("BOTTOMLEFT", 15, -40);
-    TalentTreeWindow.SpellBook.PreviousArrow:SetFrameLevel(1000);
-    TalentTreeWindow.SpellBook.PreviousArrow:SetSize(32, 32);
+    TalentTreeWindow.SpellBook.PreviousArrow:SetDisabledTexture(
+        "Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Disabled"
+    )
+    TalentTreeWindow.SpellBook.PreviousArrow:SetPoint("BOTTOMLEFT", 15, -40)
+    TalentTreeWindow.SpellBook.PreviousArrow:SetFrameLevel(1000)
+    TalentTreeWindow.SpellBook.PreviousArrow:SetSize(32, 32)
     TalentTreeWindow.SpellBook.PreviousArrow:SetText("Previous page")
-    TalentTreeWindow.SpellBook.PreviousArrow:SetScript("OnClick", function()
-        switchPage(false);
-    end)
-    TalentTree.FORGE_SPELLS_PAGES = SplitSpellsByChunk(SkillToForges, 27);
-    TalentTree.FORGE_MAX_PAGE = Tablelength(TalentTree.FORGE_SPELLS_PAGES);
-    switchPage(true);
+    TalentTreeWindow.SpellBook.PreviousArrow:SetScript(
+        "OnClick",
+        function()
+            switchPage(false)
+        end
+    )
+    TalentTree.FORGE_SPELLS_PAGES = SplitSpellsByChunk(SkillToForges, 27)
+    TalentTree.FORGE_MAX_PAGE = Tablelength(TalentTree.FORGE_SPELLS_PAGES)
+    switchPage(true)
 end
-

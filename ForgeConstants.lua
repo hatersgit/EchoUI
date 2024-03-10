@@ -9,7 +9,7 @@ FieldType = {
 PereqReqirementType = {
     ALL = 0,
     ONE = 1
-};
+}
 
 SpecVisibility = {
     PRIVATE = "0",
@@ -33,7 +33,7 @@ CharacterPointType = {
     SKILL_PAGE = "5",
     PRESTIGE_COUNT = "6",
     CLASS_TREE = "7",
-    PET_TALENT = "8",
+    PET_TALENT = "8"
 }
 
 ForgeTopic = {
@@ -109,7 +109,6 @@ ForgeTopic = {
     OFFER_SELECTION = 62,
     GET_PERK_CATALOGUE = 63,
     GET_INSPECT_PERKS = 64,
-
     MYTHIC_GET_WEEKLY_REWARD = 101,
     MYTHIC_GET_MAP_STATS = 102,
     MYTHIC_GET_AFFIXES_LIST = 103,
@@ -119,23 +118,19 @@ ForgeTopic = {
     MYTHIC_UPDATE_TIMER = 107,
     MYTHIC_UPDATE_DEATHS = 108,
     MYTHIC_UPDATE_CRITERIA = 109,
-
-    LOADOUT_ERROR                   = 120,
-    GET_LOADOUTS                    = 121,
-    SAVE_LOADOUT                    = 122,
-    DELETE_LOADOUT                  = 123,
-
-    GET_SOULSHARDS                  = 130,
-    SET_SOULSHARDS                  = 131,
-    ACTIVE_SOULSHARDS               = 132,
-
-    SEND_MAX_WORLD_TIER             = 140,
-    SHOW_WORLD_TIER_SELECT          = 141,
-    SET_WORLD_TIER                  = 142,
-
-    SEND_PORTALS                    = 150,
-    SHOW_PORTAL_MASTER_SELECT       = 151,
-    TAKE_PORTAL_TO                  = 152,
+    LOADOUT_ERROR = 120,
+    GET_LOADOUTS = 121,
+    SAVE_LOADOUT = 122,
+    DELETE_LOADOUT = 123,
+    GET_SOULSHARDS = 130,
+    SET_SOULSHARDS = 131,
+    ACTIVE_SOULSHARDS = 132,
+    SEND_MAX_WORLD_TIER = 140,
+    SHOW_WORLD_TIER_SELECT = 141,
+    SET_WORLD_TIER = 142,
+    SEND_PORTALS = 150,
+    SHOW_PORTAL_MASTER_SELECT = 151,
+    TAKE_PORTAL_TO = 152
 }
 
 -- These are the object definitions. Keyed by the same forge topic key.
@@ -144,28 +139,38 @@ SerializerDefinitions = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "ShopItemId"
-            }, {
-                NAME = "Amount"
-            }}
+            FIELDS = {
+                {
+                    NAME = "ShopItemId"
+                },
+                {
+                    NAME = "Amount"
+                }
+            }
         }
     },
     UPDATE_SPEC = {
         DELIMITER = ";",
-        FIELDS = {{
-            NAME = "Id"
-        }, {
-            NAME = "Name"
-        }, {
-            NAME = "Description"
-        }, {
-            NAME = "Active"
-        }, {
-            NAME = "SpellIconId"
-        }, {
-            NAME = "Visability"
-        }}
+        FIELDS = {
+            {
+                NAME = "Id"
+            },
+            {
+                NAME = "Name"
+            },
+            {
+                NAME = "Description"
+            },
+            {
+                NAME = "Active"
+            },
+            {
+                NAME = "SpellIconId"
+            },
+            {
+                NAME = "Visability"
+            }
+        }
     }
 }
 
@@ -176,27 +181,35 @@ DeserializerDefinitions = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "ID",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "itemID",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "flags",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "expansion",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "sourceType",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "sourceText"
-            }, {
-                NAME = "holiday",
-                TYPE = FieldType.NUMBER
-            }}
+            FIELDS = {
+                {
+                    NAME = "ID",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "itemID",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "flags",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "expansion",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "sourceType",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "sourceText"
+                },
+                {
+                    NAME = "holiday",
+                    TYPE = FieldType.NUMBER
+                }
+            }
         }
     },
     LOAD_XMOG = {
@@ -205,51 +218,66 @@ DeserializerDefinitions = {
         TYPE = FieldType.NUMBER,
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "InventoryType",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "SourceQuests",
-                OBJECT = ",",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "SourceBosses",
-                OBJECT = "$",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "Holiday",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "Camera",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "Unusable",
-                TYPE = FieldType.BOOL
-            }, {
-                NAME = "Unobtainable",
-                TYPE = FieldType.BOOL
-            }, {
-                NAME = "Weapon",
-                TYPE = FieldType.BOOL
-            }, {
-                NAME = "Enchantable",
-                TYPE = FieldType.BOOL
-            }, {
-                NAME = "Armor",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "SourceMask",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "ClassMask",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "RaceMask",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "Icon",
-                TYPE = FieldType.NUMBER
-            }}
+            FIELDS = {
+                {
+                    NAME = "InventoryType",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "SourceQuests",
+                    OBJECT = ",",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "SourceBosses",
+                    OBJECT = "$",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "Holiday",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "Camera",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "Unusable",
+                    TYPE = FieldType.BOOL
+                },
+                {
+                    NAME = "Unobtainable",
+                    TYPE = FieldType.BOOL
+                },
+                {
+                    NAME = "Weapon",
+                    TYPE = FieldType.BOOL
+                },
+                {
+                    NAME = "Enchantable",
+                    TYPE = FieldType.BOOL
+                },
+                {
+                    NAME = "Armor",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "SourceMask",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "ClassMask",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "RaceMask",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "Icon",
+                    TYPE = FieldType.NUMBER
+                }
+            }
         }
     },
     HOLIDAYS = {
@@ -266,142 +294,194 @@ DeserializerDefinitions = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "#",
-            FIELDS = {{
-                NAME = "Id"
-            }, {
-                NAME = "AddedTooltipEffects",
-                OBJECT = "%"
-            }, {
-                NAME = "Tokens",
-                OBJECT = "*",
-                DICT = "~" -- will build dict of basic KVP without fields defined.
-            }}
+            FIELDS = {
+                {
+                    NAME = "Id"
+                },
+                {
+                    NAME = "AddedTooltipEffects",
+                    OBJECT = "%"
+                },
+                {
+                    NAME = "Tokens",
+                    OBJECT = "*",
+                    DICT = "~" -- will build dict of basic KVP without fields defined.
+                }
+            }
         }
     },
     GET_GAME_MODES = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "GameMode"
-            }, {
-                NAME = "Rewards",
-                OBJECT = "*",
-                FIELDS = {
-                    DELIMITER = "&",
-                    FIELDS = {{
-                        NAME = "RewardType"
-                    }, {
-                        NAME = "Entry"
-                    }}
+            FIELDS = {
+                {
+                    NAME = "GameMode"
+                },
+                {
+                    NAME = "Rewards",
+                    OBJECT = "*",
+                    FIELDS = {
+                        DELIMITER = "&",
+                        FIELDS = {
+                            {
+                                NAME = "RewardType"
+                            },
+                            {
+                                NAME = "Entry"
+                            }
+                        }
+                    }
                 }
-            }}
+            }
         }
     },
     GET_PLAYER_COLLECTION_LAYOUT = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "Id"
-            }, {
-                NAME = "Name"
-            }, {
-                NAME = "Description"
-            }, {
-                NAME = "SpellIcon"
-            }, {
-                NAME = "Subcategories",
-                OBJECT = "*",
-                FIELDS = {
-                    DELIMITER = "&",
-                    FIELDS = {{
-                        NAME = "Id"
-                    }, {
-                        NAME = "Category"
-                    }, {
-                        NAME = "Name"
-                    }, {
-                        NAME = "Description"
-                    }, {
-                        NAME = "SpellIcon"
-                    }}
+            FIELDS = {
+                {
+                    NAME = "Id"
+                },
+                {
+                    NAME = "Name"
+                },
+                {
+                    NAME = "Description"
+                },
+                {
+                    NAME = "SpellIcon"
+                },
+                {
+                    NAME = "Subcategories",
+                    OBJECT = "*",
+                    FIELDS = {
+                        DELIMITER = "&",
+                        FIELDS = {
+                            {
+                                NAME = "Id"
+                            },
+                            {
+                                NAME = "Category"
+                            },
+                            {
+                                NAME = "Name"
+                            },
+                            {
+                                NAME = "Description"
+                            },
+                            {
+                                NAME = "SpellIcon"
+                            }
+                        }
+                    }
                 }
-            }}
+            }
         }
     },
     GET_SHOP_LAYOUT = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "Id"
-            }, {
-                NAME = "Name"
-            }, {
-                NAME = "Description"
-            }, {
-                NAME = "SpellIcon"
-            }, {
-                NAME = "Subcategories",
-                OBJECT = "*",
-                FIELDS = {
-                    DELIMITER = "&",
-                    FIELDS = {{
-                        NAME = "Id"
-                    }, {
-                        NAME = "Category"
-                    }, {
-                        NAME = "Name"
-                    }, {
-                        NAME = "Description"
-                    }, {
-                        NAME = "SpellIcon"
-                    }, {
-                        NAME = "Items",
-                        OBJECT = "@",
+            FIELDS = {
+                {
+                    NAME = "Id"
+                },
+                {
+                    NAME = "Name"
+                },
+                {
+                    NAME = "Description"
+                },
+                {
+                    NAME = "SpellIcon"
+                },
+                {
+                    NAME = "Subcategories",
+                    OBJECT = "*",
+                    FIELDS = {
+                        DELIMITER = "&",
                         FIELDS = {
-                            DELIMITER = "$",
-                            FIELDS = {{
+                            {
                                 NAME = "Id"
-                            }, {
+                            },
+                            {
                                 NAME = "Category"
-                            }, {
-                                NAME = "Subcategory"
-                            }, {
+                            },
+                            {
                                 NAME = "Name"
-                            }, {
+                            },
+                            {
                                 NAME = "Description"
-                            }, {
+                            },
+                            {
                                 NAME = "SpellIcon"
-                            }, {
-                                NAME = "Image"
-                            }, {
-                                NAME = "Cost"
-                            }, {
-                                NAME = "SaleCost"
-                            }, {
-                                NAME = "OnSale"
-                            }, {
-                                NAME = "Listed"
-                            }, {
-                                NAME = "ItemContents",
-                                OBJECT = "<",
+                            },
+                            {
+                                NAME = "Items",
+                                OBJECT = "@",
                                 FIELDS = {
-                                    DELIMITER = ">",
-                                    FIELDS = {{
-                                        NAME = "ForgeShopItemId"
-                                    }, {
-                                        NAME = "ItemId"
-                                    }, {
-                                        NAME = "Amount"
-                                    }}
+                                    DELIMITER = "$",
+                                    FIELDS = {
+                                        {
+                                            NAME = "Id"
+                                        },
+                                        {
+                                            NAME = "Category"
+                                        },
+                                        {
+                                            NAME = "Subcategory"
+                                        },
+                                        {
+                                            NAME = "Name"
+                                        },
+                                        {
+                                            NAME = "Description"
+                                        },
+                                        {
+                                            NAME = "SpellIcon"
+                                        },
+                                        {
+                                            NAME = "Image"
+                                        },
+                                        {
+                                            NAME = "Cost"
+                                        },
+                                        {
+                                            NAME = "SaleCost"
+                                        },
+                                        {
+                                            NAME = "OnSale"
+                                        },
+                                        {
+                                            NAME = "Listed"
+                                        },
+                                        {
+                                            NAME = "ItemContents",
+                                            OBJECT = "<",
+                                            FIELDS = {
+                                                DELIMITER = ">",
+                                                FIELDS = {
+                                                    {
+                                                        NAME = "ForgeShopItemId"
+                                                    },
+                                                    {
+                                                        NAME = "ItemId"
+                                                    },
+                                                    {
+                                                        NAME = "Amount"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                            }}
+                            }
                         }
-                    }}
+                    }
                 }
-            }}
+            }
         }
     },
     GET_PLAYER_COLLECTION = {
@@ -413,267 +493,351 @@ DeserializerDefinitions = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "K",
-            FIELDS = {{
-                NAME = "slotId"
-            }, {
-                NAME = "META",
-                OBJECT = "*",
-                FIELDS = {
-                    DELIMITER = "^",
-                    FIELDS = {{
-                        NAME = "ItemId"                
-                    },{
-                        NAME = "Class"                
-                    }, {
-                        NAME = "SubClass"
-                    }}
+            FIELDS = {
+                {
+                    NAME = "slotId"
+                },
+                {
+                    NAME = "META",
+                    OBJECT = "*",
+                    FIELDS = {
+                        DELIMITER = "^",
+                        FIELDS = {
+                            {
+                                NAME = "ItemId"
+                            },
+                            {
+                                NAME = "Class"
+                            },
+                            {
+                                NAME = "SubClass"
+                            }
+                        }
+                    }
                 }
-            }}
-    }},
+            }
+        }
+    },
     GET_TALENTS = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "Talents"
-            }}
+            FIELDS = {
+                {
+                    NAME = "Talents"
+                }
+            }
         }
-    },   
+    },
     LEARN_TALENT = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "K",
-            FIELDS = {{
-                NAME = "TabId"
-            }, {
-                NAME = "SpellId"
-            }, {
-                NAME = "CurrentRank"
-            }}
+            FIELDS = {
+                {
+                    NAME = "TabId"
+                },
+                {
+                    NAME = "SpellId"
+                },
+                {
+                    NAME = "CurrentRank"
+                }
+            }
         }
     },
     LEARN_SPELL_TALENT = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "K",
-            FIELDS = {{
-                NAME = "TabId"
-            }, {
-                NAME = "SpellId"
-            }, {
-                NAME = "CurrentRank"
-            }}
+            FIELDS = {
+                {
+                    NAME = "TabId"
+                },
+                {
+                    NAME = "SpellId"
+                },
+                {
+                    NAME = "CurrentRank"
+                }
+            }
         }
     },
     TalentTree_LAYOUT = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "Id"
-            }, {
-                NAME = "Name"
-            }, {
-                NAME = "SpellIconId"
-            }, {
-                NAME = "Background"
-            }, {
-                NAME = "Description"
-            },{
-                NAME = "Role"
-            },{
-                NAME = "SpellString"
-            },{
-                NAME = "TalentType"
-            },{
-                NAME = "TabIndex"
-            },{
-                NAME = "Talents",
-                OBJECT = "*",
-                FIELDS = {
-                    DELIMITER = "&",
-                    FIELDS = {{
-                        NAME = "SpecId"
-                    }, {
-                        NAME = "SpellId"
-                    },{
-                        NAME = "ColumnIndex"
-                    }, {
-                        NAME = "RowIndex"
-                    }, {
-                        NAME = "RankCost"
-                    }, {
-                        NAME = "RequiredLevel"
-                    }, {
-                        NAME = "TabPointReq",
-                        TYPE = FieldType.NUMBER
-                    }, {
-                        NAME = "NumberOfRanks"
-                    }, {
-                        NAME = "PreReqType"
-                    }, {
-                        NAME = "Prereqs",
-                        OBJECT = "@",
+            FIELDS = {
+                {
+                    NAME = "Id"
+                },
+                {
+                    NAME = "Name"
+                },
+                {
+                    NAME = "SpellIconId"
+                },
+                {
+                    NAME = "Background"
+                },
+                {
+                    NAME = "Description"
+                },
+                {
+                    NAME = "Role"
+                },
+                {
+                    NAME = "SpellString"
+                },
+                {
+                    NAME = "TalentType"
+                },
+                {
+                    NAME = "TabIndex"
+                },
+                {
+                    NAME = "Talents",
+                    OBJECT = "*",
+                    FIELDS = {
+                        DELIMITER = "&",
                         FIELDS = {
-                            DELIMITER = "$",
-                            FIELDS = {{
-                                NAME = "Talent"
-                            }, {
-                                NAME = "TalentTabId"
-                            }, {
-                                NAME = "RequiredRank"
-                            }}
+                            {
+                                NAME = "SpecId"
+                            },
+                            {
+                                NAME = "SpellId"
+                            },
+                            {
+                                NAME = "ColumnIndex"
+                            },
+                            {
+                                NAME = "RowIndex"
+                            },
+                            {
+                                NAME = "RankCost"
+                            },
+                            {
+                                NAME = "RequiredLevel"
+                            },
+                            {
+                                NAME = "TabPointReq",
+                                TYPE = FieldType.NUMBER
+                            },
+                            {
+                                NAME = "NumberOfRanks"
+                            },
+                            {
+                                NAME = "PreReqType"
+                            },
+                            {
+                                NAME = "Prereqs",
+                                OBJECT = "@",
+                                FIELDS = {
+                                    DELIMITER = "$",
+                                    FIELDS = {
+                                        {
+                                            NAME = "Talent"
+                                        },
+                                        {
+                                            NAME = "TalentTabId"
+                                        },
+                                        {
+                                            NAME = "RequiredRank"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                NAME = "Ranks",
+                                OBJECT = "%",
+                                DICT = "~" -- will build dict of basic KVP without fields defined.
+                            },
+                            {
+                                NAME = "UnleanSpellIds",
+                                OBJECT = "`" -- with just object delimiter this will be treated as a list to the deserializer
+                            },
+                            {
+                                NAME = "nodeType",
+                                TYPE = FieldType.NUMBER
+                            },
+                            {
+                                NAME = "nodeIndex",
+                                TYPE = FieldType.NUMBER
+                            },
+                            {
+                                NAME = "Choices",
+                                OBJECT = "!" -- with just object delimiter this will be treated as a list to the deserializer
+                            }
                         }
-                    },
-                    {
-                        NAME = "Ranks",
-                        OBJECT = "%",
-                        DICT = "~" -- will build dict of basic KVP without fields defined.
-                    }, {
-                        NAME = "UnleanSpellIds",
-                        OBJECT = "`" -- with just object delimiter this will be treated as a list to the deserializer
-                    },
-                    {
-                        NAME = "nodeType",
-                        TYPE = FieldType.NUMBER
-                    },
-                    {
-                        NAME = "nodeIndex",
-                        TYPE = FieldType.NUMBER
-                    },
-                    {
-                        NAME = "Choices",
-                        OBJECT = "!" -- with just object delimiter this will be treated as a list to the deserializer
-                    }}
+                    }
                 }
-            }}
+            }
         }
-
     },
     GET_CHARACTER_SPECS = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "Id"
-            }, {
-                NAME = "Name"
-            }, {
-                NAME = "Description"
-            }, {
-                NAME = "Active"
-            }, {
-                NAME = "SpellIconId"
-            }, {
-                NAME = "Visability"
-            }, {
-                NAME = "CharacterSpecTabId"
-            }, {
-                NAME = "PointsSpent",
-                OBJECT = "%",
-                DICT = "~" -- will build dict of basic KVP without fields defined.
-            }, {
-                NAME = "TalentPoints",
-                OBJECT = "@",
-                FIELDS = {
-                    DELIMITER = "$",
-                    FIELDS = {{
-                        NAME = "CharacterPointType"
-                    }, {
-                        NAME = "AvailablePoints"
-                    }, {
-                        NAME = "Earned"
-                    }, {
-                        NAME = "MaxPointsForTree"
-                    }, {
-                        NAME = "MaxPoints"
-                    }}
+            FIELDS = {
+                {
+                    NAME = "Id"
+                },
+                {
+                    NAME = "Name"
+                },
+                {
+                    NAME = "Description"
+                },
+                {
+                    NAME = "Active"
+                },
+                {
+                    NAME = "SpellIconId"
+                },
+                {
+                    NAME = "Visability"
+                },
+                {
+                    NAME = "CharacterSpecTabId"
+                },
+                {
+                    NAME = "PointsSpent",
+                    OBJECT = "%",
+                    DICT = "~" -- will build dict of basic KVP without fields defined.
+                },
+                {
+                    NAME = "TalentPoints",
+                    OBJECT = "@",
+                    FIELDS = {
+                        DELIMITER = "$",
+                        FIELDS = {
+                            {
+                                NAME = "CharacterPointType"
+                            },
+                            {
+                                NAME = "AvailablePoints"
+                            },
+                            {
+                                NAME = "Earned"
+                            },
+                            {
+                                NAME = "MaxPointsForTree"
+                            },
+                            {
+                                NAME = "MaxPoints"
+                            }
+                        }
+                    }
                 }
-            }}
+            }
         }
     },
     XMOG_OK = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "slot"
-            }, {
-                NAME = "target"
-            }, {
-                NAME = "tmog"
-            }}
+            FIELDS = {
+                {
+                    NAME = "slot"
+                },
+                {
+                    NAME = "target"
+                },
+                {
+                    NAME = "tmog"
+                }
+            }
         }
     },
     LOAD_XMOG_SET = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "^",
-            FIELDS = {{
-                NAME = "setid",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "name"
-            }, {
-                NAME = "head",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "shoulders",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "shirt",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "chest",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "waist",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "legs",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "feet",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "wrists",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "hands",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "back",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "mh",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "oh",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "ranged",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "tabard",
-                TYPE = FieldType.NUMBER
-            }}
+            FIELDS = {
+                {
+                    NAME = "setid",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "name"
+                },
+                {
+                    NAME = "head",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "shoulders",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "shirt",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "chest",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "waist",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "legs",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "feet",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "wrists",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "hands",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "back",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "mh",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "oh",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "ranged",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "tabard",
+                    TYPE = FieldType.NUMBER
+                }
+            }
         }
     },
     GET_AFFIXES = {
         OBJECT = ";",
         FIELDS = {
             DELIMITER = "K",
-            FIELDS = {{
-                NAME = "Tier",
-                TYPE = FieldType.NUMBER
-            }, {
-                DELIMITER = "*",
-                FIELDS = {
+            FIELDS = {
                 {
-                    NAME = "SpellId",
+                    NAME = "Tier",
                     TYPE = FieldType.NUMBER
-                }}
-            }
+                },
+                {
+                    DELIMITER = "*",
+                    FIELDS = {
+                        {
+                            NAME = "SpellId",
+                            TYPE = FieldType.NUMBER
+                        }
+                    }
+                }
             }
         }
     },
@@ -681,84 +845,107 @@ DeserializerDefinitions = {
         OBJECT = "*",
         FIELDS = {
             DELIMITER = "~",
-            FIELDS = {{
-                NAME = "ID",
-            }, {
-                NAME = "count",
-                }}
+            FIELDS = {
+                {
+                    NAME = "ID"
+                },
+                {
+                    NAME = "count"
+                }
+            }
         }
     },
     GET_LOADOUTS = {
         OBJECT = "*",
         FIELDS = {
             DELIMITER = "$",
-            FIELDS = {{
-                NAME = "spec"
-            }, {
-                NAME = "loadouts",
-                OBJECT = "~",
-                FIELDS = {
-                    DELIMITER = "^",
-                    FIELDS = {{
-                        NAME = "id",
-                        TYPE = FieldType.NUMBER,
-                    }, {
-                        NAME = "active",
-                        TYPE = FieldType.NUMBER,
-                    },{
-                        NAME = "name"
-                    }, {
-                        NAME = "talents"
-                    }}
+            FIELDS = {
+                {
+                    NAME = "spec"
+                },
+                {
+                    NAME = "loadouts",
+                    OBJECT = "~",
+                    FIELDS = {
+                        DELIMITER = "^",
+                        FIELDS = {
+                            {
+                                NAME = "id",
+                                TYPE = FieldType.NUMBER
+                            },
+                            {
+                                NAME = "active",
+                                TYPE = FieldType.NUMBER
+                            },
+                            {
+                                NAME = "name"
+                            },
+                            {
+                                NAME = "talents"
+                            }
+                        }
+                    }
                 }
-            }}
+            }
         }
     },
     GET_SOULSHARDS = {
         OBJECT = "~",
         FIELDS = {
             DELIMITER = "&",
-            FIELDS = {{
-                NAME = "source",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "name",
-            }, {
-                NAME = "rank",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "count",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "quality",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "special",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "groups",
-                OBJECT = "$",
-            }}
+            FIELDS = {
+                {
+                    NAME = "source",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "name"
+                },
+                {
+                    NAME = "rank",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "count",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "quality",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "special",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "groups",
+                    OBJECT = "$"
+                }
+            }
         }
     },
     GET_PORTALS = {
         OBJECT = "*",
         FIELDS = {
             DELIMITER = ";",
-            FIELDS = {{
-                NAME = "id",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "map",
-                TYPE = FieldType.NUMBER
-            }, {
-                NAME = "mapName",
+            FIELDS = {
+                {
+                    NAME = "id",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "map",
+                    TYPE = FieldType.NUMBER
+                },
+                {
+                    NAME = "mapName"
+                }
             }
-        }}
+        }
     },
     ACTIVE_SOULSHARDS = {
-        OBJECT = "~",
-    },
+        OBJECT = "~"
+    }
 }
 
 function GetSpecID()
@@ -766,79 +953,87 @@ function GetSpecID()
 end
 
 function SetTemplate(frame)
-    frame:SetBackdrop({
-        bgFile = "Interface\\Buttons\\WHITE8X8",
-        edgeFile = "",
-        tile = false,
-        tileSize = 0,
-        edgeSize = 0,
-        insets = {
-            left = 0,
-            right = 0,
-            top = 0,
-            bottom = 0
+    frame:SetBackdrop(
+        {
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "",
+            tile = false,
+            tileSize = 0,
+            edgeSize = 0,
+            insets = {
+                left = 0,
+                right = 0,
+                top = 0,
+                bottom = 0
+            }
         }
-    });
-    frame:SetBackdropColor(0, 0, 0, 1);
-    frame:SetAlpha(.75);
+    )
+    frame:SetBackdropColor(0, 0, 0, 1)
+    frame:SetAlpha(.75)
 end
 
 function CreateEchosButton(id, parent, x, y, text, textsize)
     local b = CreateFrame("BUTTON", id, parent)
-    b:SetSize(x, y);
-    b:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        insets = {top = 0, left = 0, bottom = 0, right = 0},
-    });
-    b:SetBackdropColor(1,1,1,0)
+    b:SetSize(x, y)
+    b:SetBackdrop(
+        {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            insets = {top = 0, left = 0, bottom = 0, right = 0}
+        }
+    )
+    b:SetBackdropColor(1, 1, 1, 0)
     b:SetAlpha(1)
     b:EnableMouse()
 
-    b.title = b:CreateFontString("OVERLAY");
-    b.title:SetPoint("CENTER");
-    b.title:SetFont("Fonts\\FRIZQT__.TTF", textsize);
+    b.title = b:CreateFontString("OVERLAY")
+    b.title:SetPoint("CENTER")
+    b.title:SetFont("Fonts\\FRIZQT__.TTF", textsize)
     b.title:SetText(text)
-    b.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1);
+    b.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
 
-    b:SetScript("OnEnter", function()
-        b.title:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1)
-    end)
+    b:SetScript(
+        "OnEnter",
+        function()
+            b.title:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1)
+        end
+    )
 
     return b
 end
 
-function EchosCheckBox(id, parent, text, textsize, var)
+function EchosCheckBox(id, parent, var)
     local frame = CreateFrame("FRAME", id, parent)
-    frame:SetSize(parent:GetWidth(), parent:GetHeight()/2)
+    frame:SetSize(parent:GetWidth(), parent:GetHeight() / 2)
     frame:SetPoint("TOP", 0, 0)
 
     local text = frame:CreateFontString()
     text:SetFont("Fonts\\FRIZQT__.TTF", 7)
-    text:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1);
+    text:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1)
     text:SetJustifyV("CENTER")
     text:SetText("\124cffBC961CPrestige?\124r")
     local strwidth = text:GetStringWidth()
 
-    local button = CreateFrame("Button", id.."Check", frame)
-    button:SetSize(parent:GetHeight()/4, parent:GetHeight()/4)
-    button:SetBackdrop({
-        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        insets = {top = 0, left = 0, bottom = 0, right = 0},
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
-        tileEdge = false,
-        edgeSize = .5
-    })
+    local button = CreateFrame("Button", id .. "Check", frame)
+    button:SetSize(parent:GetHeight() / 4, parent:GetHeight() / 4)
+    button:SetBackdrop(
+        {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            insets = {top = 0, left = 0, bottom = 0, right = 0},
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tileEdge = false,
+            edgeSize = .5
+        }
+    )
     button:SetHighlightTexture("Interface\\Buttons\\CheckButtonHilight")
     button:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, 1)
 
     local totalWidth = strwidth + button:GetWidth()
-    local offset = (parent:GetWidth() - totalWidth)/2
+    local offset = (parent:GetWidth() - totalWidth) / 2
     button:SetPoint("LEFT", offset, button:GetHeight())
-    text:SetPoint("LEFT", offset+1+button:GetWidth(), button:GetHeight())
+    text:SetPoint("LEFT", offset + 1 + button:GetWidth(), button:GetHeight())
 
     CheckEchosButton(button, var)
 
-    
     print(totalWidth)
 
     frame.button = button

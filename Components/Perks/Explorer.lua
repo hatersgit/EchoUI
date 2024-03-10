@@ -2,25 +2,32 @@ function InitializePerkExplorer()
     if (PerkExplorer) then
         return
     end
-    local perkBtnWidth = PaperDollFrame:GetWidth()/5
-    local perkBtnHeight = perkBtnWidth/5
+    local perkBtnWidth = PaperDollFrame:GetWidth() / 5
+    local perkBtnHeight = perkBtnWidth / 5
     PerkExplorerButton = CreateFrame("Button", "PerkExplorerButton", PaperDollFrame)
-    PerkExplorerButton = CreateEchosButton(PerkExplorerButton, PaperDollFrame, perkBtnWidth, perkBtnHeight, "Show Perks", 12)
-    PerkExplorerButton:SetPoint("TOPLEFT", perkBtnWidth/4, -perkBtnHeight)
-    PerkExplorerButton:SetScript("OnLeave", function()
-        if not PerkExplorer.body:IsVisible() then
-            PerkExplorerButton.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
-        else
-            PerkExplorerButton.title:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1)
+    PerkExplorerButton =
+        CreateEchosButton(PerkExplorerButton, PaperDollFrame, perkBtnWidth, perkBtnHeight, "Show Perks", 12)
+    PerkExplorerButton:SetPoint("TOPLEFT", perkBtnWidth / 4, -perkBtnHeight)
+    PerkExplorerButton:SetScript(
+        "OnLeave",
+        function()
+            if not PerkExplorer.body:IsVisible() then
+                PerkExplorerButton.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
+            else
+                PerkExplorerButton.title:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1)
+            end
         end
-    end)
-    PerkExplorerButton:SetScript("OnClick", function() 
-        ToggleBox(PerkExplorer.body:IsVisible())
-    end)
+    )
+    PerkExplorerButton:SetScript(
+        "OnClick",
+        function()
+            ToggleBox(PerkExplorer.body:IsVisible())
+        end
+    )
 
-    PerkExplorer = CreateFrame("FRAME", "PerkExplorer", UIParent);
-    PerkExplorer:SetSize(settings.width / 3, 30);
-    PerkExplorer:SetPoint("CENTER", 0, 0);
+    PerkExplorer = CreateFrame("FRAME", "PerkExplorer", UIParent)
+    PerkExplorer:SetSize(settings.width / 3, 30)
+    PerkExplorer:SetPoint("CENTER", 0, 0)
     PerkExplorer:SetFrameStrata("DIALOG")
     PerkExplorer:SetToplevel(true)
     PerkExplorer:EnableMouse(true)
@@ -28,74 +35,89 @@ function InitializePerkExplorer()
     PerkExplorer:SetFrameLevel(99)
     PerkExplorer:SetClampedToScreen(true)
     PerkExplorer:RegisterEvent("UNIT_LEVEL")
-    PerkExplorer:SetScript("OnEvent", function()
-        PushForgeMessage(ForgeTopic.OFFER_SELECTION, GetSpecID());
-    end)
+    PerkExplorer:SetScript(
+        "OnEvent",
+        function()
+            PushForgeMessage(ForgeTopic.OFFER_SELECTION, GetSpecID())
+        end
+    )
 
     PerkExplorer.header = CreateFrame("BUTTON", nil, PerkExplorer)
     PerkExplorer.header:SetSize(settings.width, 30)
-    PerkExplorer.header:SetPoint("TOP", 0, 0);
+    PerkExplorer.header:SetPoint("TOP", 0, 0)
     PerkExplorer.header:SetFrameLevel(PerkExplorer:GetFrameLevel() + 2)
     PerkExplorer.header:EnableMouse(true)
     PerkExplorer.header:RegisterForClicks("AnyUp", "AnyDown")
-    PerkExplorer.header:SetScript("OnMouseDown", function()
-        PerkExplorer:StartMoving()
-    end)
-    PerkExplorer.header:SetScript("OnMouseUp", function()
-        PerkExplorer:StopMovingOrSizing()
-    end)
-    SetTemplate(PerkExplorer.header);
+    PerkExplorer.header:SetScript(
+        "OnMouseDown",
+        function()
+            PerkExplorer:StartMoving()
+        end
+    )
+    PerkExplorer.header:SetScript(
+        "OnMouseUp",
+        function()
+            PerkExplorer:StopMovingOrSizing()
+        end
+    )
+    SetTemplate(PerkExplorer.header)
 
     PerkExplorer.header.close = CreateFrame("BUTTON", "InstallCloseButton", PerkExplorer.header, "UIPanelCloseButton")
     PerkExplorer.header.close:SetPoint("TOPRIGHT", PerkExplorer.header, "TOPRIGHT")
     PerkExplorer.header.close:SetNormalTexture(assets.maximize)
     PerkExplorer.header.close:SetPushedTexture(assets.maxPushed)
-    PerkExplorer.header.close:SetScript("OnClick", function()
-        ToggleBox(PerkExplorer.body:IsVisible())
-    end)
+    PerkExplorer.header.close:SetScript(
+        "OnClick",
+        function()
+            ToggleBox(PerkExplorer.body:IsVisible())
+        end
+    )
     PerkExplorer.header.close:SetFrameLevel(PerkExplorer.header:GetFrameLevel() + 2)
 
-    PerkExplorer.header.title = PerkExplorer.header:CreateFontString("OVERLAY");
-    PerkExplorer.header.title:SetPoint("CENTER", PerkExplorer.header, "CENTER");
-    PerkExplorer.header.title:SetFont("Fonts\\FRIZQT__.TTF", 18);
-    PerkExplorer.header.title:SetText("Perk Explorer");
-    PerkExplorer.header.title:SetTextColor(1, 1, 1, 1);
+    PerkExplorer.header.title = PerkExplorer.header:CreateFontString("OVERLAY")
+    PerkExplorer.header.title:SetPoint("CENTER", PerkExplorer.header, "CENTER")
+    PerkExplorer.header.title:SetFont("Fonts\\FRIZQT__.TTF", 18)
+    PerkExplorer.header.title:SetText("Perk Explorer")
+    PerkExplorer.header.title:SetTextColor(1, 1, 1, 1)
 
     PerkExplorer.body = CreateFrame("FRAME", "PerkExplorerBody", PerkExplorer)
     PerkExplorer.body:SetSize(settings.width, settings.height - 30)
-    PerkExplorer.body:SetPoint("TOP", 0, -30);
+    PerkExplorer.body:SetPoint("TOP", 0, -30)
     PerkExplorer.body:SetFrameLevel(PerkExplorer:GetFrameLevel() + 2)
 
     PerkExplorer.body.subheader = CreateFrame("FRAME", nil, PerkExplorer.body)
     PerkExplorer.body.subheader:SetSize(settings.width, 30)
-    PerkExplorer.body.subheader:SetPoint("TOP", 0, 0);
+    PerkExplorer.body.subheader:SetPoint("TOP", 0, 0)
     PerkExplorer.body.subheader:SetFrameLevel(PerkExplorer.body:GetFrameLevel() + 2)
-    SetTemplate(PerkExplorer.body.subheader);
+    SetTemplate(PerkExplorer.body.subheader)
 
     -- createArchtype()
     createYourPerks()
     createCatalog()
-    ToggleBox(true);
+    ToggleBox(true)
 end
 
 function createArchtype()
     -- ARCHTYPE TAB
     PerkExplorer.body.subheader.archtypeTab = CreateTab("Archtype")
-    PerkExplorer.body.subheader.archtypeTab:SetPoint("TOPLEFT", 0, 0);
-    PerkExplorer.body.subheader.archtypeTab:SetScript("OnClick", function()
-        PerkExplorer.body.subheader.archtypeTab:SetButtonState("PUSHED", 1);
-        PerkExplorer.body.subheader.catalogue:SetButtonState("NORMAL");
-        PerkExplorer.body.subheader.yourPerksTab:SetButtonState("NORMAL");
-        PerkExplorer.body.archtype:Show();
-        PerkExplorer.body.catalogue:Hide();
-        PerkExplorer.body.perkbox:Hide();
-    end)
+    PerkExplorer.body.subheader.archtypeTab:SetPoint("TOPLEFT", 0, 0)
+    PerkExplorer.body.subheader.archtypeTab:SetScript(
+        "OnClick",
+        function()
+            PerkExplorer.body.subheader.archtypeTab:SetButtonState("PUSHED", 1)
+            PerkExplorer.body.subheader.catalogue:SetButtonState("NORMAL")
+            PerkExplorer.body.subheader.yourPerksTab:SetButtonState("NORMAL")
+            PerkExplorer.body.archtype:Show()
+            PerkExplorer.body.catalogue:Hide()
+            PerkExplorer.body.perkbox:Hide()
+        end
+    )
 
     PerkExplorer.body.archtype = CreateFrame("FRAME", nil, PerkExplorer.body)
-    PerkExplorer.body.archtype:SetSize(settings.width, settings.height - 120);
-    PerkExplorer.body.archtype:SetPoint("TOP", 0, -30);
-    PerkExplorer.body.archtype:SetFrameLevel(PerkExplorer.body:GetFrameLevel() + 2);
-    SetTemplate(PerkExplorer.body.archtype);
+    PerkExplorer.body.archtype:SetSize(settings.width, settings.height - 120)
+    PerkExplorer.body.archtype:SetPoint("TOP", 0, -30)
+    PerkExplorer.body.archtype:SetFrameLevel(PerkExplorer.body:GetFrameLevel() + 2)
+    SetTemplate(PerkExplorer.body.archtype)
 
     PerkExplorer.body.archtype.yourArchtype = CreateFrame("FRAME", nil, PerkExplorer.body.archtype)
     PerkExplorer.body.archtype.yourArchtype:SetSize(settings.width - 16, (settings.height - 90) / 3)
@@ -124,23 +146,26 @@ end
 
 function createYourPerks()
     PerkExplorer.body.subheader.yourPerksTab = CreateTab("Your Perks")
-    PerkExplorer.body.subheader.yourPerksTab:SetPoint("TOPLEFT", 0, 0);
-    PerkExplorer.body.subheader.yourPerksTab:SetScript("OnClick", function()
-        PerkExplorer.body.subheader.yourPerksTab:SetButtonState("PUSHED", 1);
-        PerkExplorer.body.subheader.catalogue:SetButtonState("NORMAL");
-        -- PerkExplorer.body.subheader.archtypeTab:SetButtonState("NORMAL");
-        PerkExplorer.body.perkbox:Show();
-        PerkExplorer.body.catalogue:Hide();
-        -- PerkExplorer.body.archtype:Hide();
-    end)
-    PerkExplorer.body.subheader.yourPerksTab:SetButtonState("PUSHED", 1);
+    PerkExplorer.body.subheader.yourPerksTab:SetPoint("TOPLEFT", 0, 0)
+    PerkExplorer.body.subheader.yourPerksTab:SetScript(
+        "OnClick",
+        function()
+            PerkExplorer.body.subheader.yourPerksTab:SetButtonState("PUSHED", 1)
+            PerkExplorer.body.subheader.catalogue:SetButtonState("NORMAL")
+            -- PerkExplorer.body.subheader.archtypeTab:SetButtonState("NORMAL");
+            PerkExplorer.body.perkbox:Show()
+            PerkExplorer.body.catalogue:Hide()
+            -- PerkExplorer.body.archtype:Hide();
+        end
+    )
+    PerkExplorer.body.subheader.yourPerksTab:SetButtonState("PUSHED", 1)
 
     -- PERKS LIST
     PerkExplorer.body.perkbox = CreateFrame("FRAME", nil, PerkExplorer.body)
-    PerkExplorer.body.perkbox:SetSize(settings.width, settings.height - 120);
-    PerkExplorer.body.perkbox:SetPoint("TOP", 0, -30);
-    PerkExplorer.body.perkbox:SetFrameLevel(PerkExplorer.body:GetFrameLevel() + 2);
-    SetTemplate(PerkExplorer.body.perkbox);
+    PerkExplorer.body.perkbox:SetSize(settings.width, settings.height - 120)
+    PerkExplorer.body.perkbox:SetPoint("TOP", 0, -30)
+    PerkExplorer.body.perkbox:SetFrameLevel(PerkExplorer.body:GetFrameLevel() + 2)
+    SetTemplate(PerkExplorer.body.perkbox)
 
     PerkExplorer.body.perkbox.yourPerks = CreateFrame("FRAME", nil, PerkExplorer.body.perkbox)
     PerkExplorer.body.perkbox.yourPerks:SetSize(settings.width - 16, (settings.height - 90) / 3)
@@ -175,246 +200,296 @@ end
 function createCatalog()
     -- CATALOGUE TAB
     PerkExplorer.body.subheader.catalogue = CreateTab("Perk Catalogue") -- CreateFrame("BUTTON", nil, PerkExplorer.body.subheader)
-    PerkExplorer.body.subheader.catalogue:SetPoint("TOPRIGHT", 0, 0);
-    PerkExplorer.body.subheader.catalogue:SetScript("OnClick", function()
-        PerkExplorer.body.subheader.catalogue:SetButtonState("PUSHED", 1);
-        PerkExplorer.body.subheader.yourPerksTab:SetButtonState("NORMAL");
-        -- PerkExplorer.body.subheader.archtypeTab:SetButtonState("NORMAL");
-        PerkExplorer.body.catalogue:Show();
-        PerkExplorer.body.perkbox:Hide();
-        -- PerkExplorer.body.archtype:Hide();
-    end)
+    PerkExplorer.body.subheader.catalogue:SetPoint("TOPRIGHT", 0, 0)
+    PerkExplorer.body.subheader.catalogue:SetScript(
+        "OnClick",
+        function()
+            PerkExplorer.body.subheader.catalogue:SetButtonState("PUSHED", 1)
+            PerkExplorer.body.subheader.yourPerksTab:SetButtonState("NORMAL")
+            -- PerkExplorer.body.subheader.archtypeTab:SetButtonState("NORMAL");
+            PerkExplorer.body.catalogue:Show()
+            PerkExplorer.body.perkbox:Hide()
+            -- PerkExplorer.body.archtype:Hide();
+        end
+    )
 
     PerkExplorer.body.catalogue = CreateFrame("FRAME", nil, PerkExplorer.body)
-    PerkExplorer.body.catalogue:SetSize(settings.width, settings.height - 120);
+    PerkExplorer.body.catalogue:SetSize(settings.width, settings.height - 120)
     PerkExplorer.body.catalogue:SetPoint("TOP", 0, -30)
-    SetTemplate(PerkExplorer.body.catalogue);
+    SetTemplate(PerkExplorer.body.catalogue)
 
     PerkExplorer.body.catalogue.searchBar = CreateFrame("EditBox", nil, PerkExplorer.body.catalogue)
-    PerkExplorer.body.catalogue.searchBar:SetSize(115, 30);
+    PerkExplorer.body.catalogue.searchBar:SetSize(115, 30)
     PerkExplorer.body.catalogue.searchBar:SetPoint("TOPLEFT", 15, 0)
     PerkExplorer.body.catalogue.searchBar:SetMultiLine(false)
     PerkExplorer.body.catalogue.searchBar:SetFontObject(ChatFontNormal)
     PerkExplorer.body.catalogue.searchBar:SetWidth(300)
-    PerkExplorer.body.catalogue.searchBar:SetFont("Fonts\\ARIALN.TTF", 14);
-    PerkExplorer.body.catalogue.searchBar:SetMaxLetters(90);
+    PerkExplorer.body.catalogue.searchBar:SetFont("Fonts\\ARIALN.TTF", 14)
+    PerkExplorer.body.catalogue.searchBar:SetMaxLetters(90)
     PerkExplorer.body.catalogue.searchBar:SetAutoFocus(false)
-    PerkExplorer.body.catalogue.searchBar:SetScript("OnTextChanged", function(self, input)
-        if (input) then
-            LoadAllPerksList(string.upper(self:GetText()))
-        end
-    end)
-    PerkExplorer.body.catalogue.searchBar:SetScript("OnEscapePressed", function(self, input)
-        self:ClearFocus()
-    end)
-
-    searchtexBox = PerkExplorer.body.catalogue.searchBar:CreateTexture("", "BACKGROUND");
-    searchtexBox:SetTexture("Interface\\COMMON\\Common-Input-Border.blp");
-    searchtexBox:SetPoint("CENTER", PerkExplorer.body.catalogue.searchBar, "CENTER", -5, -5);
-    searchtexBox:SetSize(300, 30);
-
-    PerkExplorer.body.catalogue.dropdown = CreateFrame("Frame", "classFilterDropdown", PerkExplorer.body.catalogue,
-        "UIDropDownMenuTemplate")
-    PerkExplorer.body.catalogue.dropdown:SetPoint("TOPRIGHT", -125, 0)
-    PerkExplorer.body.catalogue.dropdown.classFilters = {{
-        text = "Warrior",
-        value = 1
-    }, {
-        text = "Paladin",
-        value = 2
-    }, {
-        text = "Hunter",
-        value = 3
-    }, {
-        text = "Rogue",
-        value = 4
-    }, {
-        text = "Priest",
-        value = 5
-    }, {
-        text = "Death Knight",
-        value = 6
-    }, {
-        text = "Shaman",
-        value = 7
-    }, {
-        text = "Mage",
-        value = 8
-    }, {
-        text = "Warlock",
-        value = 9
-    }, {
-        text = "Druid",
-        value = 11
-    }}
-
-    PerkExplorer.body.catalogue.dropdown.choice = 0;
-
-    UIDropDownMenu_Initialize(PerkExplorer.body.catalogue.dropdown, function(self, level, menuList)
-        for _, item in ipairs(self.classFilters) do
-            local info = UIDropDownMenu_CreateInfo()
-            info.text = item.text
-            info.value = item.value
-            info.func = function(self)
-
-                if (PerkExplorer.body.catalogue.dropdown.choice == item.value) then
-                    PerkExplorer.body.catalogue.dropdown.choice = 0
-                    UIDropDownMenu_SetSelectedID(PerkExplorer.body.catalogue.dropdown, -1)
-                    UIDropDownMenu_SetText(PerkExplorer.body.catalogue.dropdown, " ")
-                else
-                    PerkExplorer.body.catalogue.dropdown.choice = item.value
-                    UIDropDownMenu_SetSelectedID(PerkExplorer.body.catalogue.dropdown, self:GetID())
-                    UIDropDownMenu_SetText(PerkExplorer.body.catalogue.dropdown, item.text)
-                end
-                CloseDropDownMenus()
-                LoadAllPerksList(PerkExplorer.body.catalogue.searchBar:GetText())
+    PerkExplorer.body.catalogue.searchBar:SetScript(
+        "OnTextChanged",
+        function(self, input)
+            if (input) then
+                LoadAllPerksList(string.upper(self:GetText()))
             end
-            UIDropDownMenu_AddButton(info)
         end
-    end)
+    )
+    PerkExplorer.body.catalogue.searchBar:SetScript(
+        "OnEscapePressed",
+        function(self, _)
+            self:ClearFocus()
+        end
+    )
+
+    searchtexBox = PerkExplorer.body.catalogue.searchBar:CreateTexture("", "BACKGROUND")
+    searchtexBox:SetTexture("Interface\\COMMON\\Common-Input-Border.blp")
+    searchtexBox:SetPoint("CENTER", PerkExplorer.body.catalogue.searchBar, "CENTER", -5, -5)
+    searchtexBox:SetSize(300, 30)
+
+    PerkExplorer.body.catalogue.dropdown =
+        CreateFrame("Frame", "classFilterDropdown", PerkExplorer.body.catalogue, "UIDropDownMenuTemplate")
+    PerkExplorer.body.catalogue.dropdown:SetPoint("TOPRIGHT", -125, 0)
+    PerkExplorer.body.catalogue.dropdown.classFilters = {
+        {
+            text = "Warrior",
+            value = 1
+        },
+        {
+            text = "Paladin",
+            value = 2
+        },
+        {
+            text = "Hunter",
+            value = 3
+        },
+        {
+            text = "Rogue",
+            value = 4
+        },
+        {
+            text = "Priest",
+            value = 5
+        },
+        {
+            text = "Death Knight",
+            value = 6
+        },
+        {
+            text = "Shaman",
+            value = 7
+        },
+        {
+            text = "Mage",
+            value = 8
+        },
+        {
+            text = "Warlock",
+            value = 9
+        },
+        {
+            text = "Druid",
+            value = 11
+        }
+    }
+
+    PerkExplorer.body.catalogue.dropdown.choice = 0
+
+    UIDropDownMenu_Initialize(
+        PerkExplorer.body.catalogue.dropdown,
+        function(self, _, _) --level, menuList
+            for _, item in ipairs(self.classFilters) do
+                local info = UIDropDownMenu_CreateInfo()
+                info.text = item.text
+                info.value = item.value
+                info.func = function(self)
+                    if (PerkExplorer.body.catalogue.dropdown.choice == item.value) then
+                        PerkExplorer.body.catalogue.dropdown.choice = 0
+                        UIDropDownMenu_SetSelectedID(PerkExplorer.body.catalogue.dropdown, -1)
+                        UIDropDownMenu_SetText(PerkExplorer.body.catalogue.dropdown, " ")
+                    else
+                        PerkExplorer.body.catalogue.dropdown.choice = item.value
+                        UIDropDownMenu_SetSelectedID(PerkExplorer.body.catalogue.dropdown, self:GetID())
+                        UIDropDownMenu_SetText(PerkExplorer.body.catalogue.dropdown, item.text)
+                    end
+                    CloseDropDownMenus()
+                    LoadAllPerksList(PerkExplorer.body.catalogue.searchBar:GetText())
+                end
+                UIDropDownMenu_AddButton(info)
+            end
+        end
+    )
     ToggleDropDownMenu(1, nil, PerkExplorer.body.catalogue.dropdown, "cursor", 0, 0)
 
     PerkExplorer.body.catalogue.clipframe = CreateFrame("FRAME", nil, PerkExplorer.body.catalogue)
     PerkExplorer.body.catalogue.clipframe:SetSize(settings.width, settings.height - 160)
     PerkExplorer.body.catalogue.clipframe:SetPoint("TOP", 0, -40)
 
-    PerkExplorer.body.catalogue.clipframe.scroll = CreateFrame("ScrollFrame", "perkScroll",
-        PerkExplorer.body.catalogue.clipframe, "UIPanelScrollFrameTemplate")
-    PerkExplorer.body.catalogue.clipframe.scroll:SetPoint("TOPLEFT", -30, 10);
-    PerkExplorer.body.catalogue.clipframe.scroll:SetPoint("BOTTOMRIGHT", -30, 10);
+    PerkExplorer.body.catalogue.clipframe.scroll =
+        CreateFrame("ScrollFrame", "perkScroll", PerkExplorer.body.catalogue.clipframe, "UIPanelScrollFrameTemplate")
+    PerkExplorer.body.catalogue.clipframe.scroll:SetPoint("TOPLEFT", -30, 10)
+    PerkExplorer.body.catalogue.clipframe.scroll:SetPoint("BOTTOMRIGHT", -30, 10)
 
-    local scrollcat = CreateFrame("FRAME");
-    scrollcat:SetSize(1,1)
+    local scrollcat = CreateFrame("FRAME")
+    scrollcat:SetSize(1, 1)
     scrollcat.perks = {}
-    PerkExplorer.body.catalogue.clipframe.scroll:SetScrollChild(scrollcat);
-    PerkExplorer.body.catalogue:Hide();
+    PerkExplorer.body.catalogue.clipframe.scroll:SetScrollChild(scrollcat)
+    PerkExplorer.body.catalogue:Hide()
 end
 
 function CreateTab(titleText)
     local tab = CreateFrame("BUTTON", nil, PerkExplorer.body.subheader)
-    tab:SetHighlightTexture("Interface\\Buttons\\WHITE8x8");
-    tab:SetPushedTexture("Interface\\Buttons\\WHITE8x8");
+    tab:SetHighlightTexture("Interface\\Buttons\\WHITE8x8")
+    tab:SetPushedTexture("Interface\\Buttons\\WHITE8x8")
     tab:SetSize(settings.width / settings.tabCount, 30)
     tab:SetFrameLevel(PerkExplorer.body.subheader:GetFrameLevel() + 2)
-    SetTemplate(tab);
-    tab.title = tab:CreateFontString("OVERLAY");
-    tab.title:SetPoint("CENTER", tab, "CENTER");
-    tab.title:SetFont("Fonts\\FRIZQT__.TTF", 16);
-    tab.title:SetText(titleText);
-    tab.title:SetTextColor(1, 1, 1, 1);
+    SetTemplate(tab)
+    tab.title = tab:CreateFontString("OVERLAY")
+    tab.title:SetPoint("CENTER", tab, "CENTER")
+    tab.title:SetFont("Fonts\\FRIZQT__.TTF", 16)
+    tab.title:SetText(titleText)
+    tab.title:SetTextColor(1, 1, 1, 1)
     return tab
 end
 
 function ToggleBox(visible)
     if (visible) then
         PerkExplorerButton.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
-        PerkExplorer:Hide();
+        PerkExplorer:Hide()
     else
-        PerkExplorer:Show();
+        PerkExplorer:Show()
     end
 end
 
 function LoadAllPerksList(filterText)
-    local iconsPerRow = 14;
-    local columnID = 1;
+    local iconsPerRow = 14
+    local columnID = 1
     local iconSize = ((settings.width - 130) / 15)
-    local depth = iconSize;
+    --local depth = iconSize
     local xOffset = 40
-    local perkFrame = PerkExplorer.body.catalogue.clipframe.scroll:GetScrollChild();
-    for i, v in ipairs(perkFrame.perks) do
+    local perkFrame = PerkExplorer.body.catalogue.clipframe.scroll:GetScrollChild()
+    for _, v in ipairs(perkFrame.perks) do
         v:Hide()
     end
 
-    local i = 1;
+    local i = 1
     for spellId, meta in pairs(PerkExplorerInternal.PERKS_ALL) do
-        local metainfo = meta[1];
-        local name, _, icon = GetSpellInfo(spellId);
+        local metainfo = meta[1]
+        local name, _, icon = GetSpellInfo(spellId)
 
         if (columnID > iconsPerRow) then
             columnID = 1
         end
         if name then
-            if ((string.match(string.upper(name), filterText) or filterText == "") and
-                isBitFlipped(tonumber(metainfo["classMask"]), PerkExplorer.body.catalogue.dropdown.choice)) then
+            if
+                ((string.match(string.upper(name), filterText) or filterText == "") and
+                    isBitFlipped(tonumber(metainfo["classMask"]), PerkExplorer.body.catalogue.dropdown.choice))
+             then
                 if (not perkFrame.perks[i]) then
-                    perkFrame.perks[i] = CreateFrame("BUTTON", perkFrame.perks[i], perkFrame);
-                    perkFrame.perks[i]:SetHighlightTexture("Interface\\Buttons\\CheckButtonHilight");
-                    perkFrame.perks[i]:SetFrameLevel(perkFrame:GetFrameLevel());
-                    perkFrame.perks[i]:SetSize(iconSize, iconSize);
-                    perkFrame.perks[i]:SetPoint("TOPLEFT",
-                        settings.gap * columnID + (columnID - 1) * iconSize + xOffset, iconSize -
-                            math.ceil(i / iconsPerRow) * (iconSize + settings.gap + 5))
-                    perkFrame.perks[i].Texture = perkFrame.perks[i]:CreateTexture();
-                    perkFrame.perks[i].Texture:SetAllPoints();
-                    perkFrame.perks[i].Texture:SetPoint("CENTER", 0, 0);
+                    perkFrame.perks[i] = CreateFrame("BUTTON", perkFrame.perks[i], perkFrame)
+                    perkFrame.perks[i]:SetHighlightTexture("Interface\\Buttons\\CheckButtonHilight")
+                    perkFrame.perks[i]:SetFrameLevel(perkFrame:GetFrameLevel())
+                    perkFrame.perks[i]:SetSize(iconSize, iconSize)
+                    perkFrame.perks[i]:SetPoint(
+                        "TOPLEFT",
+                        settings.gap * columnID + (columnID - 1) * iconSize + xOffset,
+                        iconSize - math.ceil(i / iconsPerRow) * (iconSize + settings.gap + 5)
+                    )
+                    perkFrame.perks[i].Texture = perkFrame.perks[i]:CreateTexture()
+                    perkFrame.perks[i].Texture:SetAllPoints()
+                    perkFrame.perks[i].Texture:SetPoint("CENTER", 0, 0)
                 end
-                perkFrame.perks[i].Texture:SetTexture(icon);
+                perkFrame.perks[i].Texture:SetTexture(icon)
                 if metainfo.unique > 0 then
-                    perkFrame.perks[i]:SetScript("OnEnter", function()
-                        local side, _, _, xOfs = PerkExplorer:GetPoint()
-                        if (side == "LEFT" or ((xOfs > -(GetScreenWidth() * .1879) and xOfs < 0) and side == "CENTER")) then
-                            SetUpSingleTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_RIGHT");
-                        else
-                            SetUpSingleTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_LEFT");
+                    perkFrame.perks[i]:SetScript(
+                        "OnEnter",
+                        function()
+                            local side, _, _, xOfs = PerkExplorer:GetPoint()
+                            if
+                                (side == "LEFT" or
+                                    ((xOfs > -(GetScreenWidth() * .1879) and xOfs < 0) and side == "CENTER"))
+                             then
+                                SetUpSingleTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_RIGHT")
+                            else
+                                SetUpSingleTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_LEFT")
+                            end
                         end
-                    end);
+                    )
                 else
-                    perkFrame.perks[i]:SetScript("OnEnter", function()
-                        local side, _, _, xOfs = PerkExplorer:GetPoint()
-                        if (side == "LEFT" or ((xOfs > -(GetScreenWidth() * .1879) and xOfs < 0) and side == "CENTER")) then
-                            SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_RIGHT");
-                        else
-                            SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_LEFT");
+                    perkFrame.perks[i]:SetScript(
+                        "OnEnter",
+                        function()
+                            local side, _, _, xOfs = PerkExplorer:GetPoint()
+                            if
+                                (side == "LEFT" or
+                                    ((xOfs > -(GetScreenWidth() * .1879) and xOfs < 0) and side == "CENTER"))
+                             then
+                                SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_RIGHT")
+                            else
+                                SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_LEFT")
+                            end
                         end
-                    end);
+                    )
                 end
-                perkFrame.perks[i]:SetScript("OnLeave", function()
-                    clearTooltips()
-                end);
-                perkFrame.perks[i]:Show();
-                columnID = columnID + 1;
-                i = i + 1;
+                perkFrame.perks[i]:SetScript(
+                    "OnLeave",
+                    function()
+                        clearTooltips()
+                    end
+                )
+                perkFrame.perks[i]:Show()
+                columnID = columnID + 1
+                i = i + 1
             end
         end
     end
 end
 
-function LoadCurrentPerks(spec)
-    HideCharPerks();
-    local i = 1;
-    for specId, perk in ipairs(PerkExplorerInternal.PERKS_SPEC) do
-        for spellId, meta in pairs(PerkExplorerInternal.PERKS_SPEC[specId]) do
-            local name, _, icon = GetSpellInfo(spellId);
-            local rank = meta[1].rank;
-            print(rank)
+function LoadCurrentPerks(_) --spec
+    HideCharPerks()
+    local i = 1
+    for _, perk in ipairs(PerkExplorerInternal.PERKS_SPEC) do --specId, perk
+        for spellId, meta in pairs(perk) do
+            local name, _, icon = GetSpellInfo(spellId)
+            local rank = meta[1].rank
+            --print(rank)
             local current = PerkExplorer.body.perkbox.yourPerks.perks[i]
-            current.Texture:SetTexture(icon);
+            current.Texture:SetTexture(icon)
             SetRankTexture(current, rank)
 
-            current:HookScript("OnEnter", function()
-                local side, _, _, xOfs = PerkExplorer:GetPoint()
-                if (side == "LEFT" or ((xOfs > -(GetScreenWidth() * .1879) and xOfs < 0) and side == "CENTER")) then
-                    SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_RIGHT");
-                else
-                    SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_LEFT");
+            current:HookScript(
+                "OnEnter",
+                function()
+                    local side, _, _, xOfs = PerkExplorer:GetPoint()
+                    if (side == "LEFT" or ((xOfs > -(GetScreenWidth() * .1879) and xOfs < 0) and side == "CENTER")) then
+                        SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_RIGHT")
+                    else
+                        SetUpRankedTooltip(PerkExplorer.body.perkbox, spellId, "ANCHOR_LEFT")
+                    end
                 end
-            end);
-            current:SetScript("OnLeave", function()
-                clearTooltips()
-            end);
-            current:SetScript("OnClick", function()
-                lastSelectedSpell = spellId
-                StaticPopup_Show("REROLL_PERK", name)
-            end);
+            )
+            current:SetScript(
+                "OnLeave",
+                function()
+                    clearTooltips()
+                end
+            )
+            current:SetScript(
+                "OnClick",
+                function()
+                    lastSelectedSpell = spellId
+                    StaticPopup_Show("REROLL_PERK", name)
+                end
+            )
             current:Show()
-            i = i + 1;
+            i = i + 1
         end
     end
 end
 
 function HideCharPerks()
     for i = 1, 40, 1 do
-        PerkExplorer.body.perkbox.yourPerks.perks[i]:Hide();
+        PerkExplorer.body.perkbox.yourPerks.perks[i]:Hide()
     end
 end
 

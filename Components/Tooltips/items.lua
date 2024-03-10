@@ -23,14 +23,23 @@ local statOptions = {
 
 local headerTooltipInfo = {} -- itemID:headerOptionID
 customItemStatTooltipData = {} -- itemID:{{statType1,statValue1},{statType2,statValue2},}
-local tooltips = {GameTooltip, ItemRefTooltip, ShoppingTooltip1, ShoppingTooltip2, ItemRefShoppingTooltip1,
-                  ItemRefShoppingTooltip2}
+local tooltips = {
+    GameTooltip,
+    ItemRefTooltip,
+    ShoppingTooltip1,
+    ShoppingTooltip2,
+    ItemRefShoppingTooltip1,
+    ItemRefShoppingTooltip2
+}
 
-SubscribeToForgeTopic(ForgeTopic.GET_TOOLTIPS, function(msg)
-    local tt = DeserializeMessage(DeserializerDefinitions.GET_TOOLTIPS, msg);
-    -- headers
-    -- body
-end)
+SubscribeToForgeTopic(
+    ForgeTopic.GET_TOOLTIPS,
+    function(msg)
+        --local tt = DeserializeMessage(DeserializerDefinitions.GET_TOOLTIPS, msg);
+        -- headers
+        -- body
+    end
+)
 
 local function FindTooltipLine(tooltip, itemName)
     for i = 1, tooltip:NumLines() do
@@ -43,7 +52,7 @@ local function FindTooltipLine(tooltip, itemName)
 end
 
 local function addSubName(tooltip)
-    local itemName, ItemLink = tooltip:GetItem();
+    local itemName, ItemLink = tooltip:GetItem()
     if ItemLink then
         local itemID = select(3, strfind(ItemLink, "item:(%d+)"))
         if (headerTooltipInfo[itemID]) then
@@ -61,14 +70,14 @@ end
 
 local function genTertiaryStatString(itemID)
     local data = {}
-    for i, v in pairs(customItemStatTooltipData[itemID]) do
+    for _, v in pairs(customItemStatTooltipData[itemID]) do
         table.insert(data, string.format(statOptions[v[1]], v[2]))
     end
     return "\n|r|cff25aef7" .. table.concat(data, "\n") .. "|r"
 end
 
 local function addTertiaryStats(tooltip)
-    local _, ItemLink = tooltip:GetItem();
+    local _, ItemLink = tooltip:GetItem()
     if ItemLink then
         local itemID = select(3, strfind(ItemLink, "item:(%d+)"))
         if (customItemStatTooltipData[itemID]) then
@@ -89,11 +98,14 @@ local function addTertiaryStats(tooltip)
 end
 
 function initializeItemTooltips()
-    for i, v in pairs(tooltips) do
-        v:HookScript("OnTooltipSetItem", function(tooltip)
-            addSubName(tooltip);
-            addTertiaryStats(tooltip)
-        end)
+    for _, v in pairs(tooltips) do
+        v:HookScript(
+            "OnTooltipSetItem",
+            function(tooltip)
+                addSubName(tooltip)
+                addTertiaryStats(tooltip)
+            end
+        )
     end
     PushForgeMessage(ForgeTopic.GET_TOOLTIPS, "1")
 end
