@@ -1,13 +1,10 @@
 local PowerTypes = {
-    WARRIOR = {
-        --["RAGE"] = {texture = "", color = {R = 77, G = 133, B = 230}, name = "Lunar Power"},
-    },
+    WARRIOR = {}
 }
-
 
 local function UpdatePowerBar(frame, unit, isAlternateBar)
     local _, class = UnitClass(unit)
-    local powerType, powerToken = UnitPowerType(unit)
+    local _, powerToken = UnitPowerType(unit)
 
     if isAlternateBar and PowerTypes[class] and PowerTypes[class]["PlayerFrameAlternateManaBar"] then
         powerType = PowerTypes[class]["PlayerFrameAlternateManaBar"]
@@ -27,19 +24,25 @@ local function UpdatePowerBar(frame, unit, isAlternateBar)
                 frame:SetStatusBarColor(config.color.R / 255, config.color.G / 255, config.color.B / 255)
             end
 
-            frame:SetScript("OnEnter", function(self)
-                if config.name and config.name ~= "" then
-                    GameTooltip:SetOwner(UIParent, "ANCHOR_BOTTOMRIGHT", -90, 120)
-                    GameTooltip:SetText(config.name)
-                    GameTooltip:Show()
-                else
+            frame:SetScript(
+                "OnEnter",
+                function(_)
+                    if config.name and config.name ~= "" then
+                        GameTooltip:SetOwner(UIParent, "ANCHOR_BOTTOMRIGHT", -90, 120)
+                        GameTooltip:SetText(config.name)
+                        GameTooltip:Show()
+                    else
+                        GameTooltip:Hide()
+                    end
+                end
+            )
+
+            frame:SetScript(
+                "OnLeave",
+                function()
                     GameTooltip:Hide()
                 end
-            end)
-
-            frame:SetScript("OnLeave", function()
-                GameTooltip:Hide()
-            end)
+            )
         end
     end
 
@@ -69,26 +72,25 @@ end
 local function OnUpdateHandler()
     local playerUnit = "player"
     local targetUnit = "target"
-	local focusUnit = "focus"
+    local focusUnit = "focus"
 
     UpdatePowerBar(PlayerFrameManaBar, playerUnit)
     if TargetFrameManaBar then
         UpdatePowerBar(TargetFrameManaBar, targetUnit)
     end
-	
-	if 	FocusFrameManaBar then
-	UpdatePowerBar(FocusFrameManaBar, focusUnit)
-	end
-	
+
+    if FocusFrameManaBar then
+        UpdatePowerBar(FocusFrameManaBar, focusUnit)
+    end
 
     UpdateAllPartyMembers()
 end
 
 local frame = CreateFrame("FRAME")
 frame:SetScript("OnUpdate", OnUpdateHandler)
+--
 
---[[Tooltips]]--
-local function ModifyTooltipText(tooltip)
+--[[Tooltips]] local function ModifyTooltipText(tooltip)
     local _, class = UnitClass("player")
     local classConfig = PowerTypes[class]
     if classConfig then
@@ -109,11 +111,13 @@ local function ModifyTooltipText(tooltip)
 end
 
 local function HookTooltip(tooltip)
-    tooltip:HookScript("OnTooltipSetSpell", function(self)
-        ModifyTooltipText(self)
-    end)
+    tooltip:HookScript(
+        "OnTooltipSetSpell",
+        function(self)
+            ModifyTooltipText(self)
+        end
+    )
 end
-
 
 HookTooltip(GameTooltip)
 HookTooltip(ItemRefTooltip)

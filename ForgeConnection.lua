@@ -8,17 +8,17 @@ local awaitingMessage = {}
 --- @return string string The serialized string
 --- @useage SerializeMessageerializeMessage(SerializerDefinitions.UPDATE_SPEC, obj)
 function SerializeMessage(serializerDefinition, obj)
-    return ResursiveSerilize(serializerDefinition, obj, "");
+    return ResursiveSerilize(serializerDefinition, obj, "")
 end
 
 --- @return string string The serialized string
 function ResursiveSerilize(serializerDefinition, obj, msg)
     if serializerDefinition.OBJECT then
-        for i, f in ipairs(serializerDefinition.FIELDS) do
+        for _, f in ipairs(serializerDefinition.FIELDS) do
             if f.OBJECT then
                 msg = ResursiveSerilize(serializerDefinition, obj, msg)
             else
-                for i, field in ipairs(serializerDefinition.FIELDS) do
+                for _, field in ipairs(serializerDefinition.FIELDS) do
                     if msg == "" then
                         msg = msg .. obj[field.NAME]
                     else
@@ -28,7 +28,7 @@ function ResursiveSerilize(serializerDefinition, obj, msg)
             end
         end
     elseif serializerDefinition.DELIMITER and serializerDefinition.FIELDS then
-        for i, field in ipairs(serializerDefinition.FIELDS) do
+        for _, field in ipairs(serializerDefinition.FIELDS) do
             if msg == "" then
                 msg = msg .. obj[field.NAME]
             else
@@ -37,7 +37,7 @@ function ResursiveSerilize(serializerDefinition, obj, msg)
         end
     end
 
-    return msg;
+    return msg
 end
 
 --- Deserializes a message
@@ -64,7 +64,7 @@ function DeserializeMessage(deserializerDefinition, msg)
                 objects[i] = ParseType(deserializerDefinition, objStr)
             end
         else
-            objects = serializedObjs;
+            objects = serializedObjs
         end
     end
     return objects
@@ -80,19 +80,19 @@ function ParseObjectPart(obj, objStr, fields)
         local dict = {}
         local kvps = ForgeSplit(fields.OBJECT, objStr)
 
-        for i, str in ipairs(kvps) do
+        for _, str in ipairs(kvps) do
             local kvp = ForgeSplit(fields.DICT, str)
             if kvp[1] then
-                local key = kvp[1];
-                local val = kvp[2];
+                local key = kvp[1]
+                local val = kvp[2]
                 if fields.TYPE then
-                    key = ParseType(fields, kvp[1]);
+                    key = ParseType(fields, kvp[1])
                 end
                 if fields.FIELDS then
                     val = {}
                     val = ParseObjectPart(val, fields.FIELDS, kvp[2])
                 end
-                dict[key] = val; -- regular kvp of dict
+                dict[key] = val -- regular kvp of dict
             end
         end
 
@@ -101,22 +101,21 @@ function ParseObjectPart(obj, objStr, fields)
         else
             obj = dict
         end
-
     elseif fields.OBJECT then
-        obj[fields.NAME] = DeserializeMessage(fields, objStr); -- list of objects
+        obj[fields.NAME] = DeserializeMessage(fields, objStr) -- list of objects
     elseif fields.NAME then
         if fields.TYPE then
             obj[fields.NAME] = ParseType(fields, objStr)
         else
-            obj[fields.NAME] = objStr; -- field
+            obj[fields.NAME] = objStr -- field
         end
     else
-        local splitFields = ForgeSplit(fields.DELIMITER, objStr);
+        local splitFields = ForgeSplit(fields.DELIMITER, objStr)
         for j, fldStr in ipairs(splitFields) do
             obj = ParseObjectPart(obj, fldStr, fields.FIELDS[j])
         end
     end
-    return obj;
+    return obj
 end
 
 function ParseType(fields, objStr)
@@ -152,34 +151,37 @@ end
 
 local fs = CreateFrame("Frame")
 fs:RegisterEvent("CHAT_MSG_ADDON")
-fs:SetScript("OnEvent", function(self, event, ...)
-    local prefix, msg, msgType, sender = ...
-    if event ~= "CHAT_MSG_ADDON" or prefix ~= MESSAGE_PREFIX or msgType ~= "WHISPER" then
-        return
-    end
-    local split = ForgeSplit("|", msg)
-    local numberStartIndex = string.find(split[1], "}")
-    local messageContent = split[2]
-    if numberStartIndex then
-        local headerSplit = ForgeSplit("}", split[1]) -- we got a big message, its coming in parts.
-        local topic = tonumber(headerSplit[1])
+fs:SetScript(
+    "OnEvent",
+    function(_, event, ...)
+        local prefix, msg, msgType = ...
+        if event ~= "CHAT_MSG_ADDON" or prefix ~= MESSAGE_PREFIX or msgType ~= "WHISPER" then
+            return
+        end
+        local split = ForgeSplit("|", msg)
+        local numberStartIndex = string.find(split[1], "}")
+        local messageContent = split[2]
+        if numberStartIndex then
+            local headerSplit = ForgeSplit("}", split[1]) -- we got a big message, its coming in parts.
+            local topic = tonumber(headerSplit[1])
 
-        awaitingMessage[topic] = awaitingMessage[topic] or {}
-        awaitingMessage[topic][tonumber(headerSplit[2])] = messageContent
+            awaitingMessage[topic] = awaitingMessage[topic] or {}
+            awaitingMessage[topic][tonumber(headerSplit[2])] = messageContent
 
-        if #awaitingMessage[topic] == tonumber(headerSplit[3]) then
-            if listeners[topic] then
-                listeners[topic](table.concat(awaitingMessage[topic]))
+            if #awaitingMessage[topic] == tonumber(headerSplit[3]) then
+                if listeners[topic] then
+                    listeners[topic](table.concat(awaitingMessage[topic]))
+                end
+                awaitingMessage[topic] = nil
             end
-            awaitingMessage[topic] = nil
-        end
-    else
-        local topic = tonumber(split[1]);
-        if listeners[topic] then
-            listeners[topic](messageContent)
+        else
+            local topic = tonumber(split[1])
+            if listeners[topic] then
+                listeners[topic](messageContent)
+            end
         end
     end
-end)
+)
 
 function SplitByChunk(text, chunkSize)
     local chunks = {}
@@ -210,45 +212,49 @@ function PairsByKeys(t, f)
 end
 
 function dump(o)
-    if type(o) == 'table' then
-        local s = '{'
+    if type(o) == "table" then
+        local s = "{"
         for k, v in pairs(o) do
-            if type(k) ~= 'number' then
+            if type(k) ~= "number" then
                 k = '"' .. k .. '"'
             end
-            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+            s = s .. "[" .. k .. "] = " .. dump(v) .. ","
         end
-        return s .. '}'
+        return s .. "}"
     else
         return tostring(o)
     end
 end
 
 function ForgeSplit(delim, str)
-    local t = {};
-    local part = "";
+    local t = {}
+    local part = ""
 
     for i = 1, #str do
         local c = str:sub(i, i)
 
         if c == delim then
-            table.insert(t, part);
-            part = "";
+            table.insert(t, part)
+            part = ""
         else
-            part = part .. c;
+            part = part .. c
         end
     end
 
     if part ~= "" then
-        table.insert(t, part);
+        table.insert(t, part)
     end
 
-    return t;
+    return t
 end
 
 function math.round(num, decimals)
     decimals = math.pow(10, decimals or 0)
     num = num * decimals
-    if num >= 0 then num = math.floor(num + 0.5) else num = math.ceil(num - 0.5) end
+    if num >= 0 then
+        num = math.floor(num + 0.5)
+    else
+        num = math.ceil(num - 0.5)
+    end
     return num / decimals
 end
