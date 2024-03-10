@@ -1,6 +1,6 @@
 PORTALMASTER = {
     width = GetScreenWidth() / 10,
-    height = tmogsettings.headerheight * 4,
+    height = tmogsettings.headerheight * 5,
     pad = GetScreenWidth() / 120
 }
 
@@ -43,6 +43,17 @@ function createPortalmasterSelectWindow()
             self:SetScale(1)
         end
     )
+    Portalmaster:SetBackdrop(
+        {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            insets = {top = 1, left = 1, bottom = 1, right = 1},
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tileEdge = false,
+            edgeSize = .5
+        }
+    )
+    Portalmaster:SetBackdropColor(0, 0, 0, .75)
+    Portalmaster:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
     Portalmaster:Hide()
 
     Portalmaster.header = CreateFrame("BUTTON", nil, Portalmaster)
@@ -63,7 +74,6 @@ function createPortalmasterSelectWindow()
             Portalmaster:StopMovingOrSizing()
         end
     )
-    SetTemplate(Portalmaster.header)
 
     Portalmaster.header.close = CreateFrame("BUTTON", "InstallCloseButton", Portalmaster.header, "UIPanelCloseButton")
     Portalmaster.header.close:SetSize(tmogsettings.headerheight, tmogsettings.headerheight)
@@ -84,14 +94,7 @@ function createPortalmasterSelectWindow()
 
     Portalmaster.body = CreateFrame("Frame", Portalmaster.body, Portalmaster)
     Portalmaster.body:SetPoint("TOP", 0, -tmogsettings.headerheight)
-    Portalmaster.body:SetSize(PORTALMASTER.width, PORTALMASTER.height)
-    Portalmaster.body:SetBackdrop(
-        {
-            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-            insets = {top = 0, left = 0, bottom = 0, right = 0}
-        }
-    )
-    Portalmaster.body:SetBackdropColor(0, 0, 0, .75)
+    Portalmaster.body:SetSize(PORTALMASTER.width, PORTALMASTER.height-tmogsettings.headerheight)
 
     Portalmaster.body.Go =
         CreateEchosButton(
@@ -102,7 +105,7 @@ function createPortalmasterSelectWindow()
         "Go",
         8
     )
-    Portalmaster.body.Go:SetPoint("BOTTOM", 0, 0)
+    Portalmaster.body.Go:SetPoint("BOTTOM", 0, tmogsettings.headerheight/4)
     Portalmaster.body.Go:SetScript(
         "OnLeave",
         function()

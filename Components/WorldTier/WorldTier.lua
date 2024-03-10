@@ -15,7 +15,7 @@ WorldTierState = {
 
 function createWorldTierSelectWindow()
     WorldTier = CreateFrame("Frame", nil, WorldTier)
-    WorldTier:SetSize(WorldTierSettings.width, WorldTierSettings.height) --- LEFT/RIGHT -- --UP/DOWN --
+    WorldTier:SetSize(WorldTierSettings.width, WorldTierSettings.height+tmogsettings.headerheight) --- LEFT/RIGHT -- --UP/DOWN --
     WorldTier:SetPoint("TOPLEFT", GetScreenWidth() / 5, -GetScreenHeight() / 6) --- LEFT/RIGHT -- --UP/DOWN --
     WorldTier:SetFrameStrata("DIALOG")
     WorldTier:EnableMouse(true)
@@ -31,6 +31,17 @@ function createWorldTierSelectWindow()
             self:SetScale(1)
         end
     )
+    WorldTier:SetBackdrop(
+        {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            insets = {top = 1, left = 1, bottom = 1, right = 1},
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            tileEdge = false,
+            edgeSize = .5
+        }
+    )
+    WorldTier:SetBackdropColor(0, 0, 0, .75)
+    WorldTier:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
     WorldTier:Hide()
 
     WorldTier.header = CreateFrame("BUTTON", nil, WorldTier)
@@ -51,7 +62,6 @@ function createWorldTierSelectWindow()
             WorldTier:StopMovingOrSizing()
         end
     )
-    SetTemplate(WorldTier.header)
 
     WorldTier.header.close = CreateFrame("BUTTON", "InstallCloseButton", WorldTier.header, "UIPanelCloseButton")
     WorldTier.header.close:SetSize(tmogsettings.headerheight, tmogsettings.headerheight)
@@ -73,24 +83,10 @@ function createWorldTierSelectWindow()
     WorldTier.body = CreateFrame("Frame", WorldTier.body, WorldTier)
     WorldTier.body:SetPoint("TOP", 0, -tmogsettings.headerheight)
     WorldTier.body:SetSize(WorldTierSettings.width, WorldTierSettings.height)
-    WorldTier.body:SetBackdrop(
-        {
-            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-            insets = {top = 0, left = 0, bottom = 0, right = 0}
-        }
-    )
-    WorldTier.body:SetBackdropColor(0, 0, 0, .6)
 
     WorldTier.body.buttonBox = CreateFrame("Frame", WorldTier.body.buttonBox, WorldTier.body)
     WorldTier.body.buttonBox:SetSize(WorldTierSettings.width / 3, WorldTierSettings.height)
     WorldTier.body.buttonBox:SetPoint("TOPLEFT", 0, 0)
-    WorldTier.body.buttonBox:SetBackdrop(
-        {
-            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
-            insets = {top = 0, left = 0, bottom = 0, right = 0}
-        }
-    )
-    WorldTier.body.buttonBox:SetBackdropColor(0, 0, 0, .35)
     WorldTier.body.buttonBox.buttons = {}
 
     local DescriptionSplit = (WorldTierSettings.height - 10) / 2
@@ -132,6 +128,7 @@ function createWorldTierSelectWindow()
             WorldTier.body.buttonBox.Start.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
         end
     )
+    WorldTier.body.buttonBox.Start:SetHighlightTexture("")
     WorldTier.body.buttonBox.Start:SetPoint("Bottom", 0, 0)
     WorldTier.body.buttonBox.Start:SetScript(
         "OnClick",
