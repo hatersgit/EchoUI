@@ -982,7 +982,6 @@ function CreateEchosButton(id, parent, x, y, text, textsize)
         }
     )
     b:SetBackdropColor(1, 1, 1, 0)
-    b:SetAlpha(1)
     b:EnableMouse()
     b:SetHighlightTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]], "ADD")
 
