@@ -229,16 +229,14 @@ SubscribeToForgeTopic(
 
 function RankToQualityColor(rank)
     if rank == 1 then
-        return 157 / 255, 157 / 255, 157 / 255
-    elseif rank == 2 then
         return 255 / 255, 255 / 255, 255 / 255
-    elseif rank == 3 then
+    elseif rank == 2 then
         return 30 / 255, 255 / 255, 0 / 255
-    elseif rank == 4 then
+    elseif rank == 3 then
         return 0 / 255, 112 / 255, 221 / 255
-    elseif rank == 5 then
+    elseif rank == 4 then
         return 163 / 255, 53 / 255, 238 / 255
-    elseif rank == 6 then
+    elseif rank == 5 then
         return 255 / 255, 128 / 255, 0 / 255
     end
 end

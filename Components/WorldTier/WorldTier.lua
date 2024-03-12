@@ -1,6 +1,7 @@
 BASE = {
     UNLOCKED_MAX = 1,
-    PRESTIGE = 0
+    PRESTIGE = 0,
+    ACTIVE_TIER = 1,
 }
 
 WorldTierSettings = {
@@ -227,4 +228,12 @@ function drawButtons()
             WorldTier.body.buttonBox.buttons[i]:SetHighlightTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]])
         end
     end
+end
+
+function CreateWorldTierDisplay()
+    WorldTierDisplay = UIParent:CreateFontString("OVERLAY")
+    WorldTierDisplay:SetPoint("TOP", UIParent, "TOP", 0, -tmogsettings.headerheight)
+    WorldTierDisplay:SetFont("Fonts\\FRIZQT__.TTF", 22, "THICKOUTLINE")
+    WorldTierDisplay:SetText("WorldTier "..BASE.ACTIVE_TIER)
+    WorldTierDisplay:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
 end

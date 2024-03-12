@@ -112,6 +112,7 @@ function createPortalmasterSelectWindow()
             Portalmaster.body.Go.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
         end
     )
+    Portalmaster.body.Go:SetHighlightTexture("")
     Portalmaster.body.Go:SetScript(
         "OnClick",
         function()

@@ -19,6 +19,10 @@ TalentTree = {
     activeString = nil
 }
 
+TT_SETTINGS = {
+    headerheight = (GetScreenHeight() / 1.8) / 25
+}
+
 TreeCache = {
     Spells = {},
     PointsSpent = {},
@@ -40,20 +44,29 @@ TreeCache = {
 --     insets = {left = 4, right = 4, top = 4, bottom = 4}
 -- }
 
-TalentTreeWindow = CreateFrame("Frame", "TalentFrame", UIParent)
-TalentTreeWindow:SetSize(1000, 800)
-TalentTreeWindow:SetPoint("CENTER", 0, 50) --- LEFT/RIGHT -- --UP/DOWN --
+TalentTreeWindow = CreateFrame("Frame", "TalentFrame", nil)
+TalentTreeWindow:SetSize(550, 400)
 TalentTreeWindow:SetFrameLevel(1)
+TalentTreeWindow:SetMovable(true)
 TalentTreeWindow:SetFrameStrata("MEDIUM")
-TalentTreeWindow:Hide()
-
+TalentTreeWindow:SetPoint("CENTER", 0, 0)
+TalentTreeWindow:SetBackdrop(
+    {
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        insets = {top = 1, left = 1, bottom = 1, right = 1},
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        tileEdge = false,
+        edgeSize = 1
+    }
+)
+TalentTreeWindow:SetBackdropColor(0, 0, 0, .75)
+TalentTreeWindow:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
 TalentTreeWindow:SetScript(
     "OnHide",
     function(_)
         ForgedWoWMicrobarButton:SetButtonState("NORMAL")
     end
 )
-
 TalentTreeWindow:SetScript(
     "OnUpdate",
     function(_)
@@ -65,366 +78,90 @@ TalentTreeWindow:SetScript(
     end
 )
 
-ClassSpecWindow = CreateFrame("Frame", "ClassSpecWindow", UIParent)
-ClassSpecWindow:SetSize(1000, 800)
-ClassSpecWindow:SetPoint("CENTER", 0, 50) --- LEFT/RIGHT -- --UP/DOWN --
-ClassSpecWindow:SetFrameLevel(1)
-ClassSpecWindow:SetFrameStrata("MEDIUM")
-ClassSpecWindow:Hide()
-
-ClassSpecWindow:SetScript(
-    "OnUpdate",
-    function(_)
-        if ClassSpecWindow:IsVisible() then
-            ForgedWoWMicrobarButton:SetButtonState("PUSHED", 1)
-        else
-            ForgedWoWMicrobarButton:SetButtonState("NORMAL")
-        end
+TalentTreeWindow.header = CreateFrame("BUTTON", nil, TalentTreeWindow)
+TalentTreeWindow.header:SetSize(TalentTreeWindow:GetWidth(), TT_SETTINGS.headerheight)
+TalentTreeWindow.header:SetPoint("TOP", 0, 0)
+TalentTreeWindow.header:SetFrameLevel(4)
+TalentTreeWindow.header:EnableMouse(true)
+TalentTreeWindow.header:RegisterForClicks("AnyUp", "AnyDown")
+TalentTreeWindow.header:SetScript(
+    "OnMouseDown",
+    function()
+        TalentTreeWindow:StartMoving()
+    end
+)
+TalentTreeWindow.header:SetScript(
+    "OnMouseUp",
+    function()
+        TalentTreeWindow:StopMovingOrSizing()
     end
 )
 
-ClassSpecWindow:SetScript(
-    "OnHide",
-    function(_)
-        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
-    end
-)
-
-ClassSpecWindow:RegisterEvent("UNIT_SPELLCAST_START")
-ClassSpecWindow:RegisterEvent("UNIT_SPELLCAST_STOP")
-ClassSpecWindow:SetScript(
-    "OnEvent",
-    function(_, event, unit)
-        if unit == "player" then
-            local spellName = UnitCastingInfo(unit)
-            if event == "UNIT_SPELLCAST_START" and spellName == "Activate Primary Spec" then
-                CastingBarFrame:SetBackdrop({bgFile = "path/to/your/background/texture"})
-                CastingBarFrame:SetStatusBarTexture("path/to/your/statusbar/texture")
-                CastingBarFrame:SetFrameStrata("TOOLTIP")
-                CastingBarFrame:ClearAllPoints()
-                CastingBarFrame:SetPoint("CENTER", ClassSpecWindow, "CENTER", 0, 0)
-            elseif event == "UNIT_SPELLCAST_STOP" then
-                CastingBarFrame:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-                CastingBarFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 115)
-            end
-        end
-    end
-)
-
---Disable Buttons Based On Level--
--- local function CheckPlayerLevel(button, buttonText)
---     local playerLevel = UnitLevel("player")
---     if playerLevel < 10 then
---         button:Disable()
---         button:GetNormalTexture():SetVertexColor(0.5, 0.5, 0.5, 1)
---         buttonText:SetTextColor(0.5, 0.5, 0.5, 1)
-
---         if ClassSpecWindow:IsVisible() or TalentTreeWindow:IsVisible() then
---             ClassSpecWindow:Hide()
---             TalentTreeWindow:Hide()
---         end
---     else
---         button:Enable()
---         button:GetNormalTexture():SetVertexColor(1, 1, 1, 1) -- Cor original (branco) para a textura
---         buttonText:SetTextColor(1, 1, 0) -- Cor original (branco) para o texto
---     end
--- end
-
-local windows = {TalentTreeWindow, ClassSpecWindow}
-for i, window in ipairs(windows) do
-    -- local SpecTabButton = CreateFrame("Button", "SpecButton" .. i, window) -- Identificador único
-    -- SpecTabButton:SetSize(150, 60)
-    -- SpecTabButton:SetFrameStrata("MEDIUM")
-    -- SpecTabButton:SetScript("OnClick", function()
-    --      if TalentTreeWindow:IsVisible() then
-    --      TalentTreeWindow:Hide()
-    --      ClassSpecWindow:Show()
-    --      end
-    -- end)
-
-    -- local normalTexture = SpecTabButton:CreateTexture()
-    -- normalTexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\uiframestab")
-    -- normalTexture:SetAllPoints(SpecTabButton)
-
-    -- local highlightTexture = SpecTabButton:CreateTexture()
-    -- highlightTexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\uiframestab-Highlight")
-    -- highlightTexture:SetAllPoints(SpecTabButton)
-
-    -- SpecTabButton:SetNormalTexture(normalTexture)
-    -- SpecTabButton:SetHighlightTexture(highlightTexture)
-
-    -- local SpecTabButtonText = SpecTabButton:CreateFontString()
-    -- SpecTabButtonText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
-    -- SpecTabButtonText:SetPoint("CENTER", 0, 0)
-    -- SpecTabButtonText:SetTextColor(1, 1, 0)
-    -- SpecTabButtonText:SetText("Specializations")
-
-    -- SpecTabButton:SetScript("OnUpdate", function(self, elapsed)
-    -- CheckPlayerLevel(SpecTabButton, SpecTabButtonText)
-    -- end)
-
-    -- Botão Talentos
-    local TalentTabButton = CreateFrame("Button", "TalentTabButton" .. i, window) -- Identificador único
-    TalentTabButton:SetSize(100, 60)
-    TalentTabButton:SetFrameStrata("MEDIUM")
-    TalentTabButton:SetScript(
-        "OnClick",
-        function()
-            if ClassSpecWindow:IsVisible() then
-                ClassSpecWindow:Hide()
-                TalentTreeWindow:Show()
-            end
-        end
-    )
-
-    local normalTexture2 = TalentTabButton:CreateTexture()
-    normalTexture2:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\uiframestab")
-    normalTexture2:SetAllPoints(TalentTabButton)
-
-    local highlightTexture2 = TalentTabButton:CreateTexture()
-    highlightTexture2:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\uiframestab-Highlight")
-    highlightTexture2:SetAllPoints(TalentTabButton)
-
-    TalentTabButton:SetNormalTexture(normalTexture2)
-    TalentTabButton:SetHighlightTexture(highlightTexture2)
-
-    local TalentTabText = TalentTabButton:CreateFontString()
-    TalentTabText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")
-    TalentTabText:SetPoint("CENTER", 0, 0)
-    TalentTabText:SetTextColor(1, 1, 0)
-    TalentTabText:SetText("Talents")
-
-    if window == TalentTreeWindow then
-        --SpecTabButton:SetPoint("BOTTOMLEFT", window, "BOTTOMLEFT", -200, -35)
-        TalentTabButton:SetPoint("LEFT", SpecTabButton, "RIGHT", 50, 0)
-    elseif window == ClassSpecWindow then
-        --SpecTabButton:SetPoint("BOTTOMLEFT", window, "BOTTOMLEFT", -200, -35)
-        TalentTabButton:SetPoint("LEFT", SpecTabButton, "RIGHT", 50, 0)
-    end
-end
-
-local function AdjustFrameScale(frame)
-    local maxScale = 0.85
-    local minScale = 0.3
-
-    -- Obtendo as dimensões da tela e a escala da interface do usuário
-    local screenWidth, screenHeight = GetScreenWidth(), GetScreenHeight()
-    local windowWidth, windowHeight = frame:GetWidth(), frame:GetHeight()
-
-    -- Calculando a escala necessária para ajustar o frame na tela
-    local scaleWidth = screenWidth / windowWidth
-    local scaleHeight = screenHeight / windowHeight
-    local newScale = math.min(scaleWidth, scaleHeight, maxScale)
-    newScale = math.max(newScale, minScale)
-
-    -- Ajustando a escala do frame
-    frame:SetScale(newScale)
-end
-
--- Evento acionado quando a tela é redimensionada
-UIParent:SetScript(
-    "OnSizeChanged",
-    function(_, _, _)
-        AdjustFrameScale(TalentTreeWindow)
-    end
-)
-
-AdjustFrameScale(TalentTreeWindow)
-AdjustFrameScale(ClassSpecWindow)
-
-Bordertexture = TalentTreeWindow:CreateTexture(nil, "OVERLAY")
-Bordertexture:SetTexture(CONSTANTS.UI.MAIN_BG)
-Bordertexture:SetPoint("CENTER", 0, -100)
-Bordertexture:SetTexCoord(0, 1, 0, 0.57)
-Bordertexture:SetSize(TalentTreeWindow:GetWidth() * 1.8, TalentTreeWindow:GetHeight() * 1.3)
-
-BorderSpec = ClassSpecWindow:CreateTexture(nil, "OVERLAY")
-BorderSpec:SetTexture(CONSTANTS.UI.MAIN_BG_SPEC)
-BorderSpec:SetPoint("CENTER", 0, -100)
-BorderSpec:SetTexCoord(0, 1, 0, 0.57)
-BorderSpec:SetSize(TalentTreeWindow:GetWidth() * 1.8, TalentTreeWindow:GetHeight() * 1.3)
-
-ClassSpecWindow.Lockout = CreateFrame("Frame", "ClassSpecWindow.Lockout", ClassSpecWindow)
-ClassSpecWindow.Lockout:SetSize(ClassSpecWindow:GetWidth() * 1.433, ClassSpecWindow:GetHeight() * 0.96)
-ClassSpecWindow.Lockout:SetFrameLevel(100)
-ClassSpecWindow.Lockout:EnableMouse(true)
-ClassSpecWindow.Lockout:SetPoint("CENTER", -25, -5)
-ClassSpecWindow.Lockout:Hide()
-
-BackgroundSpec = ClassSpecWindow:CreateTexture(nil, "BACKGROUND")
-BackgroundSpec:SetTexture(CONSTANTS.UI.BG_SPEC)
-BackgroundSpec:SetPoint("CENTER", 0, -117)
-BackgroundSpec:SetDrawLayer("BACKGROUND", -1)
-BackgroundSpec:SetTexCoord(0, 1, 0, 0.57)
-BackgroundSpec:SetSize(TalentTreeWindow:GetWidth() * 1.8, TalentTreeWindow:GetHeight() * 1.4)
-
-SpecTitleText = ClassSpecWindow:CreateFontString()
-SpecTitleText:SetFont("Fonts\\FRIZQT__.TTF", 15, "OUTLINE")
-SpecTitleText:SetPoint("TOP", BackgroundSpec, "TOP", -20, -45)
-SpecTitleText:SetTextColor(1, 1, 0)
-SpecTitleText:SetText("Specializations")
-
-for i, window in ipairs(windows) do
-    local closeButton = CreateFrame("Button", "CloseTalentUI" .. i, window, "UIPanelCloseButton")
-    closeButton:SetSize(40, 40)
-    closeButton:SetFrameLevel(100)
-
-    closeButton:SetScript(
-        "OnClick",
-        function()
-            window:Hide()
-        end
-    )
-
-    ClassIconTexture = window:CreateTexture(nil, "ARTWORK")
-    ClassIconTexture:SetTexture(CONSTANTS.UI.MAIN_BG)
-    ClassIconTexture:SetSize(67, 67)
-    ClassIconTexture:SetDrawLayer("ARTWORK", 1)
-    SetPortraitToTexture(ClassIconTexture, CONSTANTS.classIcon[string.upper(CONSTANTS.CLASS)])
-
-    LockoutTexture = ClassSpecWindow.Lockout:CreateTexture(nil, "BACKGROUND")
-    LockoutTexture:SetAllPoints()
-    LockoutTexture:SetTexture("Interface\\AddOns\\ForgedWoWCommunication\\UI\\Background_DragonflightSpec.blp")
-    LockoutTexture:SetTexCoord(0.083007813, 0.880859375, 0.576660156, 1)
-    LockoutTexture:SetVertexColor(0, 0, 0, 0.7)
-    LockoutTexture:SetDrawLayer("BACKGROUND", -1)
-
-    ClassSpecWindow.Lockout.texture = texture
-
-    if window == TalentTreeWindow then
-        closeButton:SetPoint("TOPRIGHT", window, "TOPRIGHT", 190, 8)
-        ClassIconTexture:SetPoint("TOPLEFT", window, "TOPLEFT", -241, 12)
-    elseif window == ClassSpecWindow then
-        closeButton:SetPoint("TOPRIGHT", window, "TOPRIGHT", 190, 8)
-        ClassIconTexture:SetPoint("TOPLEFT", window, "TOPLEFT", -241, 12)
-    end
-end
-
-TalentTreeWindow.Container = CreateFrame("Frame", "Talent.Background", TalentTreeWindow)
-TalentTreeWindow.Container:SetSize(TalentTreeWindow:GetWidth() * 1.42, TalentTreeWindow:GetHeight() * 0.925) -- Talent Tree Window's Background --
-TalentTreeWindow.Container:SetPoint("CENTER", -20, 0)
-TalentTreeWindow.Container:SetFrameStrata("MEDIUM")
-
-TalentTreeWindow.Container.Background = TalentTreeWindow:CreateTexture(nil, "BACKGROUND")
-TalentTreeWindow.Container.Background:SetTexCoord(0.16, 1, 0.0625, 0.5625)
-TalentTreeWindow.Container.Background:SetPoint("CENTER", -32, 20)
-TalentTreeWindow.Container.Background:SetDrawLayer("BACKGROUND", -1)
-TalentTreeWindow.Container.Background:SetSize(TalentTreeWindow:GetWidth() * 1.47, TalentTreeWindow:GetHeight() * 0.945)
-
-TalentTreeWindow.Container.CloseButtonForgeSkills =
-    CreateFrame("Button", TalentTreeWindow.Container.CloseButtonForgeSkills, TalentTreeWindow.Container)
-
-TalentTreeWindow.Container.CloseButtonForgeSkills:SetScript(
+TalentTreeWindow.header.close = CreateFrame("BUTTON", "InstallCloseButton", TalentTreeWindow.header, "UIPanelCloseButton")
+TalentTreeWindow.header.close:SetSize(TT_SETTINGS.headerheight, TT_SETTINGS.headerheight)
+TalentTreeWindow.header.close:SetPoint("TOPRIGHT", TalentTreeWindow.header, "TOPRIGHT")
+TalentTreeWindow.header.close:SetScript(
     "OnClick",
     function()
-        HideForgeSkills()
+        TalentTreeWindow:Hide()
     end
 )
-TalentTreeWindow.Container.CloseButtonForgeSkills:SetSize(25, 25)
-TalentTreeWindow.Container.CloseButtonForgeSkills:SetPoint("TOPRIGHT", -15, -75)
-TalentTreeWindow.Container.CloseButtonForgeSkills.Circle =
-    CreateFrame(
-    "Frame",
-    TalentTreeWindow.Container.CloseButtonForgeSkills.Circle,
-    TalentTreeWindow.Container.CloseButtonForgeSkills
-)
-TalentTreeWindow.Container.CloseButtonForgeSkills.Circle:SetSize(25, 25)
-TalentTreeWindow.Container.CloseButtonForgeSkills.Circle:SetPoint("CENTER", -1.5, -1)
-TalentTreeWindow.Container.CloseButtonForgeSkills.Circle:SetBackdrop(
+TalentTreeWindow.header.close:SetFrameLevel(TalentTreeWindow.header:GetFrameLevel() + 1)
+
+TalentTreeWindow.header.title = TalentTreeWindow.header:CreateFontString("OVERLAY")
+TalentTreeWindow.header.title:SetPoint("CENTER", TalentTreeWindow.header, "CENTER")
+TalentTreeWindow.header.title:SetFont("Fonts\\FRIZQT__.TTF", 9)
+TalentTreeWindow.header.title:SetText("Advancement")
+TalentTreeWindow.header.title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
+
+TalentTreeWindow.body = CreateFrame("Frame", TalentTreeWindow.body, TalentTreeWindow)
+TalentTreeWindow.body:SetPoint("TOP", 0, -TT_SETTINGS.headerheight)
+TalentTreeWindow.body:SetSize(TalentTreeWindow:GetWidth()-2, TalentTreeWindow:GetHeight()-TT_SETTINGS.headerheight-2)
+
+TalentTreeWindow.body.talents = CreateFrame("Frame", TalentTreeWindow.body.talents, TalentTreeWindow.body)
+TalentTreeWindow.body.talents:SetPoint("TOPRIGHT", 0, 0)
+TalentTreeWindow.body.talents:SetSize(9*TalentTreeWindow.body:GetWidth()/10, TalentTreeWindow.body:GetHeight())
+
+TalentTreeWindow.body.talents.box = CreateFrame("Frame", TalentTreeWindow.body.talents.box , TalentTreeWindow.body.talents)
+TalentTreeWindow.body.talents.box:SetPoint("CENTER", -TT_SETTINGS.headerheight/2, 0)
+TalentTreeWindow.body.talents.box:SetSize(TalentTreeWindow.body.talents:GetWidth()-2*TT_SETTINGS.headerheight, TalentTreeWindow.body.talents:GetHeight()-4*TT_SETTINGS.headerheight)
+TalentTreeWindow.body.talents.box:SetBackdrop(
     {
-        bgFile = CONSTANTS.UI.BORDER_CLOSE_BTN
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        insets = {top = 1, left = 1, bottom = 1, right = 1},
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        tileEdge = false,
+        edgeSize = 1
     }
 )
-TalentTreeWindow.Container.CloseButtonForgeSkills:Hide()
+TalentTreeWindow.body.talents.box:SetBackdropColor(0, 0, 0, .5)
+TalentTreeWindow.body.talents.box:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
 
-TalentTreeWindow.ChoiceSpecs = CreateFrame("Frame", "TalentTreeWindow.ChoiceSpecs", TalentTreeWindow.Container)
-TalentTreeWindow.ChoiceSpecs:SetSize(100, 100)
-TalentTreeWindow.ChoiceSpecs:SetPoint("TOP", 30, -100)
-TalentTreeWindow.ChoiceSpecs:SetFrameLevel(15)
-TalentTreeWindow.ChoiceSpecs:SetBackdrop(
+TalentTreeWindow.body.mastery = CreateFrame("Frame", TalentTreeWindow.body.mastery, TalentTreeWindow.body)
+TalentTreeWindow.body.mastery:SetPoint("TOPLEFT", 0, 0)
+TalentTreeWindow.body.mastery:SetSize(TalentTreeWindow.body:GetWidth()/10, TalentTreeWindow.body:GetHeight())
+TalentTreeWindow.body.mastery.prog = CreateFrame("StatusBar", TalentTreeWindow.body.mastery.prog, TalentTreeWindow.body.mastery)
+TalentTreeWindow.body.mastery.prog:SetOrientation("Vertical")
+TalentTreeWindow.body.mastery.prog:SetSize(TalentTreeWindow.body.mastery:GetWidth()-2*TT_SETTINGS.headerheight, TalentTreeWindow.body.talents.box:GetHeight())
+TalentTreeWindow.body.mastery.prog:SetStatusBarColor(188 / 255, 150 / 255, 28 / 255, 1)
+TalentTreeWindow.body.mastery.prog:SetMinMaxValues(0, 40)
+TalentTreeWindow.body.mastery.prog:SetValue(20)
+TalentTreeWindow.body.mastery.prog:SetStatusBarTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+TalentTreeWindow.body.mastery.prog:SetPoint("CENTER",TT_SETTINGS.headerheight/2,0)
+TalentTreeWindow.body.mastery.prog:SetBackdrop(
     {
-        edgeSize = 24,
-        bgFile = CONSTANTS.UI.BACKGROUND_SPECS
+        bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        insets = {top = 1, left = 1, bottom = 1, right = 1},
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+        tileEdge = false,
+        edgeSize = 1
     }
 )
-TalentTreeWindow.ChoiceSpecs.Spec = {}
-TalentTreeWindow.ChoiceSpecs:Show()
+TalentTreeWindow.body.mastery.prog:SetBackdropColor(0, 0, 0, 0)
+TalentTreeWindow.body.mastery.prog:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
 
-table.insert(UISpecialFrames, "TalentTreeWindow")
-table.insert(UISpecialFrames, "ClassSpecWindow")
-
--- Define your popup dialog
-StaticPopupDialogs["CONFIRM_TALENT_WIPE"] = {
-    text = "Are you sure you want to reset all of your talents?",
-    button1 = "Yes",
-    button2 = "No",
-    OnAccept = function()
-        local playerLevel = UnitLevel("player") -- Get the player's level
-        if playerLevel >= 10 then
-            RevertAllTalents()
-            DEFAULT_CHAT_FRAME:AddMessage("Your talents have been reset.", 1, 1, 0) -- Sends a yellow message
-        else
-            DEFAULT_CHAT_FRAME:AddMessage("You must be at least level 10 to reset talents.", 1, 0, 0) -- Sends a red error message
-        end
-        StaticPopup_Hide("CONFIRM_TALENT_WIPE")
-    end,
-    timeout = 0,
-    whileDead = true,
-    hideOnEscape = true,
-    preferredIndex = 3, -- prevent taint from Blizzard UI
-    OnShow = function(self)
-        self:ClearAllPoints()
-        self:SetPoint("CENTER", 50, 250) -- position it to center
-        self:SetSize(800, 800) -- adjust the size as necessary
-    end
-}
-
-local AcceptTalentsButton = CreateFrame("Button", "AcceptTalentsButton", TalentTreeWindow, "UIPanelButtonTemplate")
-AcceptTalentsButton:SetSize(200, 30)
-AcceptTalentsButton:SetPoint("BOTTOM", 0, 45) -- Position the button at the top right of the TalentTreeWindow
-AcceptTalentsButton:SetText("Apply Changes")
-AcceptTalentsButton:Show()
-
-local resetButton = CreateFrame("Button", "ResetTalentsButton", TalentTreeWindow, "UIPanelButtonTemplate")
-resetButton:SetSize(115, 40)
-resetButton:SetPoint("RIGHT", AcceptTalentsButton, "RIGHT", 150, 0) -- Position the button at the top right of the TalentTreeWindow
-resetButton:SetText("Reset Talents")
-resetButton:Show()
-
-resetButton:SetScript(
-    "OnClick",
-    function()
-        StaticPopup_Show("CONFIRM_TALENT_WIPE")
-    end
-)
-
-local alphaSlider = CreateFrame("Slider", "AlphaSlider", TalentTreeWindow, "OptionsSliderTemplate")
-alphaSlider:SetMinMaxValues(0, 1)
-alphaSlider:SetValueStep(0.01)
-alphaSlider:SetWidth(200)
-alphaSlider:SetHeight(20)
-alphaSlider:SetPoint("BOTTOM", AcceptTalentsButton, "BOTTOM", 0, -20) -- Posiciona a SliderBar
-
-local lowText = alphaSlider:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-lowText:SetPoint("TOPLEFT", alphaSlider, "BOTTOMLEFT", 2, 3)
-
-local highText = alphaSlider:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-highText:SetPoint("TOPRIGHT", alphaSlider, "BOTTOMRIGHT", -2, 3)
-
-local titleText = alphaSlider:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-titleText:SetPoint("TOP", alphaSlider, "BOTTOM", 0, 3)
-titleText:SetText("Background Transparence")
-
--- Define a função para o evento OnValueChanged
-alphaSlider:SetScript(
-    "OnValueChanged",
-    function(_, value)
-        TalentTreeWindow.Container.Background:SetAlpha(value)
-    end
-)
-
--- Define o valor inicial do alpha
-alphaSlider:SetValue(1) -- Começa com alpha 1 (totalmente opaco)
+TalentTreeWindow.body.mastery.button = CreateFrame("Button", TalentTreeWindow.body.mastery.button, TalentTreeWindow.body.mastery)
+TalentTreeWindow.body.mastery.button:SetSize()
 
 --Testing--
 TalentLoadoutCache = TalentTree.TalentLoadoutCache
