@@ -1,7 +1,6 @@
 function HideMainWindow()
     if TalentTreeWindow:IsShown() then
         TalentTreeWindow:Hide()
-        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
     end
 end
 
@@ -9,11 +8,9 @@ function ToggleMainWindow()
     if TalentTreeWindow:IsShown() then
         TalentTreeWindow:Hide()
         PlaySound("TalentScreenClose")
-        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
     else
         TalentTreeWindow:Show()
         PlaySound("TalentScreenOpen")
-        ForgedWoWMicrobarButton:SetButtonState("PUSHED", 1)
     end
     if SpellBookFrame:IsShown() then
         SpellBookFrame:Hide()
@@ -23,80 +20,6 @@ function ToggleMainWindow()
     end
     if FriendsFrame:IsShown() then
         FriendsFrame:Hide()
-    end
-end
-
-TalentTreeWindow:HookScript(
-    "OnHide",
-    function()
-        ForgedWoWMicrobarButton:SetButtonState("NORMAL")
-    end
-)
-
-function FindTabInForgeSpell(tabId)
-    for _, page in ipairs(TalentTree.FORGE_SPELLS_PAGES) do
-        for _, tab in pairs(page) do
-            if tonumber(tab.Id) == tonumber(tabId) then
-                return tab
-            end
-        end
-    end
-end
-
-local originalButtonTextures = {}
-
-local function SaveOriginalButtonTextures(button, tabId)
-    if not originalButtonTextures[tabId] then
-        originalButtonTextures[tabId] = {
-            normal = button:GetNormalTexture() and button:GetNormalTexture():GetTexture() or nil,
-            pushed = button:GetPushedTexture() and button:GetPushedTexture():GetTexture() or nil,
-            highlight = button:GetHighlightTexture() and button:GetHighlightTexture():GetTexture() or nil
-        }
-    end
-end
-
-local function UpdateButtonTexture(button, textureKey, texturePath)
-    if texturePath then
-        local texture = button:CreateTexture()
-        texture:SetTexture(texturePath)
-        texture:SetSize(button:GetWidth() + 100, button:GetHeight() + 10)
-        texture:SetPoint("CENTER", button, "CENTER", 40, -5)
-
-        if textureKey == "normal" then
-            button:SetNormalTexture(texture)
-        elseif textureKey == "pushed" then
-            button:SetPushedTexture(texture)
-        elseif textureKey == "highlight" then
-            button:SetHighlightTexture(texture)
-        end
-    end
-end
-
-local function UpdateActivateSpecButton(tab)
-    local button = TalentTreeWindow.TabsLeft.Spec[tab.Id].ActivateSpecBtn
-    local isTabSelected = TalentTreeWindow.TabsLeft.Spec[tab.Id]:GetButtonState() == "PUSHED"
-
-    SaveOriginalButtonTextures(button, tab.Id)
-
-    if isTabSelected then
-        button:SetText("Activated")
-        button:SetNormalFontObject(GameFontHighlightSmall)
-        button:SetNormalTexture(nil)
-        button:SetPushedTexture(nil)
-        button:SetHighlightTexture(nil)
-        button:GetFontString():SetTextColor(0, 1, 0)
-        button:SetButtonState("PUSHED")
-    else
-        button:SetText("Activate")
-        button:SetNormalFontObject(GameFontNormalSmall)
-        button:SetButtonState("NORMAL")
-
-        local textures = originalButtonTextures[tab.Id]
-        UpdateButtonTexture(button, "normal", textures.normal)
-        UpdateButtonTexture(button, "pushed", textures.pushed)
-        UpdateButtonTexture(button, "highlight", textures.highlight)
-
-        button:GetFontString():SetTextColor(1, 1, 1)
     end
 end
 
@@ -213,22 +136,11 @@ function GetStrByCharacterPointType(talentType)
     end
 end
 
-function GetPositionXY(frame)
-    local position = {
-        x = 0,
-        y = 0
-    }
-    local _, _, _, xOfs, yOfs = frame:GetPoint()
-    position.x = xOfs
-    position.y = yOfs
-    return position
-end
-
 function IsNodeUnlocked(talent, CurrentRank)
     return CurrentRank ~= -1 or IsUnlocked(CurrentRank, tonumber((talent.NumberOfRanks)))
 end
 
-function DrawNode(startPosition, endPosition, parentFrame, parent, offSet, talent, CurrentRank, previousSpell)
+function DrawNode(startPosition, endPosition, parentFrame, parent, talent, CurrentRank, previousSpell)
     local nodeSize = 0.05 -- Este é um valor arbitrário; ajuste para o tamanho real dos seus nós
     local x1 = startPosition.x + nodeSize / 2
     local y1 = startPosition.y + nodeSize / 2
@@ -242,9 +154,7 @@ function DrawNode(startPosition, endPosition, parentFrame, parent, offSet, talen
     local cx = (x1 + x2) / 2
     local cy = (y1 + y2) / 2
 
-    if dy ~= 0 and dx == 0 then -- Verifica se a linha é puramente vertical
-        cx = cx - 1
-    end
+
 
     if not parentFrame.node[talent.SpellId] then
         parentFrame.node[talent.SpellId] = CreateFrame("Frame", parentFrame.node[talent.SpellId], parent)
@@ -391,7 +301,6 @@ function SelectTab(tab)
     else
         TalentTreeWindow.GridTalent:Hide()
     end
-    ShowTypeTalentPoint(tab.TalentType, tab.Id)
     if tab.TalentType == CharacterPointType.TALENT_SKILL_TREE then
         ShowTypeTalentPoint("7", TalentTree.ClassTree)
     end
@@ -970,13 +879,7 @@ end
     end
 end
 
-function FindPreReq(spells, spellId)
-    for _, spell in pairs(spells) do
-        if tonumber(spell.SpellId) == spellId then
-            return spell
-        end
-    end
-end
+
 
 function InitializePreReqAndDrawNodes(spells, spellNode, children, parent, offset, CurrentRank)
     for _, pr in pairs(spellNode.Prereqs) do
@@ -1001,35 +904,32 @@ function ActivateSpec(tabId)
     PushForgeMessage(ForgeTopic.ACTIVATE_CLASS_SPEC, tabId)
 end
 
-function CreateTooltip(spell, SpellId, NextSpellId, parent, CurrentRank)
+function UpdateTooltip(spell, SpellId, NextSpellId, parent, CurrentRank)
     if (SpellId == nil) then
         return
     end
+
+    local rankedSpell = SpellId
+    local curRank = TreeCache.Spells[tonumber(spell.SpecId)][spell.nodeIndex]
+    local Uprank = nil
+    if curRank < tonumber(spell.NumberOfRanks) and curRank > 0 then
+        rankedSpell = spell.Ranks[tostring(curRank)]
+        Uprank = spell.Ranks[tostring(curRank+1)]
+    elseif curRank == tonumber(spell.NumberOfRanks) then
+        rankedSpell = spell.Ranks[tostring(curRank)]
+        Uprank = nil
+    else
+        rankedSpell = SpellId
+        Uprank = nil
+    end
+
     FirstRankToolTip:SetOwner(parent, "ANCHOR_RIGHT")
     SecondRankToolTip:SetOwner(FirstRankToolTip, "ANCHOR_BOTTOM")
-    FirstRankToolTip:SetHyperlink("spell:" .. SpellId)
+    FirstRankToolTip:SetHyperlink("spell:" .. rankedSpell)
+    if Uprank then
+        SecondRankToolTip:SetHyperlink("spell:"..Uprank)
+    end
 
-    if tonumber(spell.RankCost) > 0 and (CurrentRank < tonumber(spell.NumberOfRanks)) then
-        FirstRankToolTip:AddLine("Rank cost: " .. spell.RankCost, 1, 1, 1)
-        FirstRankToolTip:AddLine("Required Level: " .. spell.RequiredLevel, 1, 1, 1)
-        FirstRankToolTip:AddLine("Dev: (SpellID): " .. spell.SpellId, 1, 1, 1)
-    end
-    if not NextSpellId and tonumber(spell.RankCost) > 0 and (CurrentRank < tonumber(spell.NumberOfRanks)) then
-        FirstRankToolTip:SetSize(FirstRankToolTip:GetWidth(), FirstRankToolTip:GetHeight() + 40) --28 default
-    end
-    if NextSpellId then
-        FirstRankToolTip:AddLine("Next rank:", 1, 1, 1)
-        SecondRankToolTip:SetHyperlink("spell:" .. NextSpellId)
-        SecondRankToolTip:SetBackdropBorderColor(0, 0, 0, 0)
-        SecondRankToolTip:SetBackdropColor(0, 0, 0, 0)
-        SecondRankToolTip:AddLine(" ")
-
-        SecondRankToolTip:SetPoint("TOP", FirstRankToolTip, "TOP", 0, -(FirstRankToolTip:GetHeight() + 25))
-        FirstRankToolTip:SetSize(
-            FirstRankToolTip:GetWidth(),
-            FirstRankToolTip:GetHeight() + SecondRankToolTip:GetHeight() + 30
-        )
-    end
 end
 
 function GetSpellIdAndNextRank(_, spell) --tabId, spell

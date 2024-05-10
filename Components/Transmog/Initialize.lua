@@ -28,29 +28,6 @@ function InitializeTransmog()
     )
 end
 
--- SubscribeToForgeTopic(ForgeTopic.LEARN_TALENT_ERROR, function(msg)
---     print("Talent Learn Error: " .. msg);
--- end)
-
--- SubscribeToForgeTopic(ForgeTopic.GET_TALENTS, function(msg)
---     if not TalentTree.FORGE_TALENTS then
---         TalentTree.FORGE_TALENTS = {};
---     end
---     --print(msg)
---     for i, talent in ipairs(DeserializeMessage(DeserializerDefinitions.GET_TALENTS, msg)) do
---         if talent.Talents then
---             for spellId, rank in pairs(talent.Talents) do
---                 if not TalentTree.FORGE_TALENTS[talent.TabId] then
---                     TalentTree.FORGE_TALENTS[talent.TabId] = {};
---                 end
---                 TalentTree.FORGE_TALENTS[talent.TabId][spellId] = rank;
---             end
---             UpdateTalent(talent.TabId, talent.Talents)
---         end
---     end
---     UpdateTalentCurrentView();
--- end)
-
 SubscribeToForgeTopic(
     ForgeTopic.COLLECTION_INIT,
     function(msg)

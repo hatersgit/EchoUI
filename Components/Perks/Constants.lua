@@ -1,8 +1,8 @@
 PATH = "Interface\\AddOns\\ForgedWoWCommunication\\UI\\"
 settings = {
     selectionIconSize = 60,
-    iconsPerRow = 12,
-    gap = 8,
+    iconsPerRow = 9,
+    gap = 12,
     width = GetScreenWidth() / 2.18,
     height = GetScreenHeight() / 1.4,
     tabCount = 2,
@@ -27,75 +27,8 @@ PerkExplorerInternal = {
     PERKS_SEARCH = {}
 }
 
-perkTooltip1 = CreateFrame("GameTooltip", "perkTooltip1", UIParent, "GameTooltipTemplate")
-perkTooltip1:SetBackdrop(
-    {
-        bgFile = "",
-        edgeFile = "",
-        tile = false,
-        tileSize = 0,
-        edgeSize = 0,
-        insets = {
-            left = 0,
-            right = 0,
-            top = 0,
-            bottom = 0
-        }
-    }
-)
-perkTooltip2 = CreateFrame("GameTooltip", "perkTooltip2", UIParent, "GameTooltipTemplate")
-perkTooltip2:SetBackdrop(
-    {
-        bgFile = "",
-        edgeFile = "",
-        tile = false,
-        tileSize = 0,
-        edgeSize = 0,
-        insets = {
-            left = 0,
-            right = 0,
-            top = 0,
-            bottom = 0
-        }
-    }
-)
--- SetTemplate(perkTooltip2);
-perkTooltip3 = CreateFrame("GameTooltip", "perkTooltip3", UIParent, "GameTooltipTemplate")
-perkTooltip3:SetBackdrop(
-    {
-        bgFile = "",
-        edgeFile = "",
-        tile = false,
-        tileSize = 0,
-        edgeSize = 0,
-        insets = {
-            left = 0,
-            right = 0,
-            top = 0,
-            bottom = 0
-        }
-    }
-)
--- SetTemplate(perkTooltip3);
-perkBG = CreateFrame("Frame", nil, UIParent)
-perkBG:SetPoint("CENTER")
-perkBG:SetSize(128, 128)
-perkBG:SetBackdrop(
-    {
-        bgFile = "Interface/TutorialFrame/TutorialFrameBackground",
-        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-        tile = true,
-        edgeSize = 22,
-        tileSize = 22,
-        insets = {
-            left = 4,
-            right = 4,
-            top = 4,
-            bottom = 4
-        }
-    }
-)
-perkBG:Hide()
+perkTooltip = CreateFrame("GameTooltip", "perkTooltip", UIParent, "GameTooltipTemplate")
+
 -- perkBG:SetBackdropColor(0, 0, 1, .5)
 lastSelectedSpell = 0
 StaticPopupDialogs["REROLL_PERK"] = {
@@ -105,7 +38,7 @@ StaticPopupDialogs["REROLL_PERK"] = {
     spellId = "%s",
     spellName = "%s",
     OnAccept = function(_)
-        PushForgeMessage(ForgeTopic.REROLL_PERK, GetSpecID() .. ";" .. lastSelectedSpell)
+        PushForgeMessage(ForgeTopic.REROLL_PERK, "1;" .. lastSelectedSpell)
     end,
     sound = "levelup2",
     timeout = 30,

@@ -13,124 +13,73 @@ function ToggleTalentFrame(openPet)
     end
 end
 
--- local function printTable(t, indent)
---     indent = indent or ""
---     for key, value in pairs(t) do
---         if type(value) == "table" then
---             print(indent .. tostring(key) .. ": ")
---             printTable(value, indent .. "  ")
---         else
---             print(indent .. tostring(key) .. ": " .. tostring(value))
---         end
---     end
--- end
+function TalentFrame_LoadUI() -- kill default frame load :)
+end
+
+function PlayerTalentFrame_Toggle(pet, suggestedTalentGroup)
+    ToggleMainWindow();
+end
 
 function InitializeTalentTree()
-    --TalentTree.ClassTree = GetClassTree(UnitClass("player"))
-    --InitializeGridForForgeSkills();
-
-    InitializeGridForTalent()
+    InitTalents()
     FirstRankToolTip = CreateFrame("GameTooltip", "firstRankToolTip", WorldFrame, "GameTooltipTemplate")
+    FirstRankToolTip:SetBackdrop(
+        {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            insets = {top = 0, left = 0, bottom = 0, right = 0},
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeSize = 1,
+            tile = false
+        }
+    )
+    FirstRankToolTip:SetBackdropColor(0, 0, 0, .75)
+    FirstRankToolTip:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
+
     SecondRankToolTip = CreateFrame("GameTooltip", "secondRankToolTip", WorldFrame, "GameTooltipTemplate")
-    PushForgeMessage(ForgeTopic.TalentTree_LAYOUT, "-1")
+    SecondRankToolTip:SetBackdrop(
+        {
+            bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            insets = {top = 0, left = 0, bottom = 0, right = 0},
+            edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+            edgeSize = 1,
+            tile = false
+        }
+    )
+    SecondRankToolTip:SetBackdropColor(0, 0, 0, .75)
+    SecondRankToolTip:SetBackdropBorderColor(188 / 255, 150 / 255, 28 / 255, .6)
+
     SubscribeToForgeTopic(
         ForgeTopic.TalentTree_LAYOUT,
         function(msg)
-            GetTalentTreeLayout(msg)
+            LoadTalentTreeLayout(msg)
         end
     )
+    PushForgeMessage(ForgeTopic.TalentTree_LAYOUT, "-1")
     SubscribeToForgeTopic(
         ForgeTopic.GET_CHARACTER_SPECS,
         function(msg)
-            GetCharacterSpecs(msg)
+            LoadCharacterSpecs(msg)
         end
     )
-end
-
-local prevTalLen = 0
-local tree = 0
-function GetTalentTreeLayout(msg)
-    local listOfObjects = DeserializeMessage(DeserializerDefinitions.TalentTree_LAYOUT, msg)
-    talentLen = 0
-    for _, tab in ipairs(listOfObjects) do
-        if
-            tab.TalentType == CharacterPointType.RACIAL_TREE or tab.TalentType == CharacterPointType.PRESTIGE_TREE or
-                tab.TalentType == CharacterPointType.SKILL_PAGE
-         then
-            table.insert(TalentTree.FORGE_TABS, tab)
-        elseif tab.TalentType == CharacterPointType.TALENT_SKILL_TREE then
-            if not TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE] then
-                TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE] = tab
-            else
-                prevTalLen = talentLen
-                talentLen = #TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE].Talents
-
-                if talentLen > prevTalLen then
-                    tree = tree + 1
-                end
-
-                for _, talent in ipairs(tab.Talents) do
-                    talent.ColumnIndex = 7 * tree + talent.ColumnIndex
-                    talentLen = talentLen + 1
-                    TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE].Talents[talentLen] = talent
-                end
-            end
-        end
-    end
-
-    table.sort(
-        TalentTree.FORGE_TABS,
-        function(left, right)
-            return left.Id < right.Id
-        end
-    )
-
     PushForgeMessage(ForgeTopic.GET_CHARACTER_SPECS, "-1")
-end
 
-function GetCharacterSpecs(msg)
-    --print(msg)
-    local listOfObjects = DeserializeMessage(DeserializerDefinitions.GET_CHARACTER_SPECS, msg)
-    for _, spec in ipairs(listOfObjects) do
-        if spec.Active == "1" then
-            SELECTED_SPEC = spec.CharacterSpecTabId
-            TalentTree.FORGE_ACTIVE_SPEC = spec
-
-            for _, pointStruct in ipairs(spec.TalentPoints) do
-                TreeCache.Points[pointStruct.CharacterPointType] = pointStruct.AvailablePoints
-                TalentTree.MaxPoints[pointStruct.CharacterPointType] = pointStruct.Earned
-            end
-        else
-            table.insert(TalentTree.FORGE_SPEC_SLOTS, spec)
+    SubscribeToForgeTopic(
+        ForgeTopic.LEARN_TALENT_ERROR,
+        function(msg)
+            print("Talent Learn Error: " .. msg)
         end
-    end
+    )
 
-    if TalentTree.INITIALIZED and TalentTree.FORGE_SELECTED_TAB then
-        ShowTypeTalentPoint(TalentTree.FORGE_SELECTED_TAB.TalentType, TalentTree.FORGE_SELECTED_TAB.Id)
-    else
-        InitializeTalentLeft()
-        InitializeForgePoints()
-        --print(dump(TalentTree.FORGE_TABS))
-        local firstTab = TalentTree.FORGE_TABS[CharacterPointType.TALENT_SKILL_TREE]
-        SelectTab(firstTab)
-    end
-    TalentTree.INITIALIZED = true
     PushForgeMessage(ForgeTopic.GET_TALENTS, "-1")
-    PushForgeMessage(ForgeTopic.GET_LOADOUTS, "-1")
 end
 
-SubscribeToForgeTopic(
-    ForgeTopic.LEARN_TALENT_ERROR,
-    function(msg)
-        print("Talent Learn Error: " .. msg)
-    end
-)
+
 
 --local onUpdateFrame = CreateFrame("Frame")
 SubscribeToForgeTopic(
     ForgeTopic.GET_TALENTS,
     function(msg)
-        --LoadTalentString(msg);
+        LoadTalentString(msg);
     end
 )
 
@@ -159,17 +108,14 @@ SubscribeToForgeTopic(
     function(msg)
         --print(msg)
         ClassSpecWindow.Lockout:Hide()
-        TalentTreeWindow:Show()
-        ClassSpecWindow:Hide()
     end
 )
 
-function LoadTalentString(msg)
+function aLoadTalentString(msg)
     RevertAllTalents()
     local type, _ = string.find(Util.alpha, string.sub(msg, 1, 1))
     local spec, _ = string.find(Util.alpha, string.sub(msg, 2, 2))
-    --local class, _ = string.find(Util.alpha, string.sub(msg, 3, 3))
-    --print(msg)
+
     if
         type - 1 == tonumber(CharacterPointType.TALENT_SKILL_TREE) and string.len(msg) > 3 and
             tonumber(spec) == tonumber(TalentTree.FORGE_SELECTED_TAB.Id)
@@ -177,7 +123,7 @@ function LoadTalentString(msg)
         if not TreeCache.PreviousString[type] then
             TreeCache.PreviousString[type] = "empty :)"
         end
-        --if msg ~= TreeCache.PreviousString[type] then
+        
         if not TalentTree.FORGE_TALENTS then
             TalentTree.FORGE_TALENTS = {}
         end

@@ -28,6 +28,7 @@ CONSTANTS = {
         PUSHED_TEXTURE_BTN = PATH .. "ui-microbutton-ej-down",
         EMPTY_PROGRESS_BAR = PATH .. "main_bar",
         COLORED_PROGRESS_BAR = PATH .. "colored_bar",
+        NORMAL_BAR = PATH .. "64x8_bar",
         SHADOW_TEXTURE = PATH .. "shadow_effect",
         RANK_PLACEHOLDER = PATH .. "rank_placeholder",
         BORDER_CLOSE_BTN = PATH .. "NodeBorder\\border_close",
@@ -36,8 +37,17 @@ CONSTANTS = {
         BORDER_ACTIVE = PATH .. "NodeBorder\\border_active",
         BORDER_LOCKED = PATH .. "NodeBorder\\border_locked",
         BORDER_UNLOCKED = PATH .. "NodeBorder\\border_unlocked",
+        BORDER_SPELL = PATH .. "NodeBorder\\border_spell",
         BORDER_EXCLUSIVITY = PATH .. "exclusive",
         BACKGROUND_SPECS = PATH .. "tabsUI\\specsUI"
+    },
+    ASSETS = {
+        GREENARROW = PATH ..  "Buttons\\UI-MicroStream-Green",
+        GOLDARROW = PATH ..  "Buttons\\UI-MicroStream-Yellow",
+        OPTIONS = PATH ..  "Buttons\\UI-OptionsButton",
+        REFRESH = PATH ..  "Buttons\\UI-RefreshButton",
+        STOP = PATH ..  "Buttons\\UI-StopButton",
+        ACCEPT = "Interface\\BUTTONS\\UI-GuildButton-OfficerNote-Up",
     },
     CLASS = UnitClass("player")
 }

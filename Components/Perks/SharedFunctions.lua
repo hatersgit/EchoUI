@@ -6,12 +6,17 @@ function CreateRankedTooltip(id, parent, tt, depth, width, anchor, unique)
         return
     end
     tt:SetOwner(parent, anchor, -2, -1 * depth)
-    tt:SetHyperlink("spell:" .. id)
+    tt:SetHyperlink("spell:" .. id) 
     if unique == 1 then
         tt:AddLine("")
-        tt:AddLine("|cff990033Unique\124r")
-        tt:SetHeight(tt:GetHeight() + 10)
+        tt:AddLine("|cffF7AF9DUnique\124r")
+    else
+        tt:AddLine("")
+        tt:AddLine("|cff6FEDB7Stackable\124r")
     end
+
+
+    tt:SetHeight(tt:GetHeight() + 10)
 
     if width == 0 then
         tt:SetSize(tt:GetWidth(), tt:GetHeight())
@@ -21,65 +26,26 @@ function CreateRankedTooltip(id, parent, tt, depth, width, anchor, unique)
 end
 
 function SetUpRankedTooltip(parent, id, anchor)
-    CreateRankedTooltip(id, parent, perkTooltip1, 0, 0, anchor, 0)
-    CreateRankedTooltip(
-        id + 1000000,
-        parent,
-        perkTooltip2,
-        perkTooltip1:GetHeight(),
-        perkTooltip1:GetWidth(),
-        anchor,
-        0
-    )
-    CreateRankedTooltip(
-        id + 2000000,
-        parent,
-        perkTooltip3,
-        perkTooltip1:GetHeight() + perkTooltip2:GetHeight(),
-        perkTooltip1:GetWidth(),
-        anchor,
-        0
-    )
-    perkBG:SetSize(
-        perkTooltip1:GetWidth() + 5,
-        perkTooltip1:GetHeight() + perkTooltip2:GetHeight() + perkTooltip3:GetHeight() + 5
-    )
-    perkBG:SetPoint("TOP", perkTooltip1, "TOP", 3, 3)
-    perkBG:Show()
+    CreateRankedTooltip(id, parent, perkTooltip, 0, 0, anchor, 0)
 end
 
-function SetUpSingleTooltip(parent, id, anchor)
-    CreateRankedTooltip(id, parent, perkTooltip1, 0, 0, anchor, 1)
-    perkBG:SetSize(perkTooltip1:GetWidth() + 5, perkTooltip1:GetHeight() + 5)
-    perkBG:SetPoint("TOP", perkTooltip1, "TOP", 3, 3)
-    perkBG:Show()
+function SetUpSingleTooltip(parent, id, anchor, maxrank)
+    CreateRankedTooltip(id, parent, perkTooltip, 0, 0, anchor, maxrank)
 end
 
 function clearTooltips()
-    perkTooltip1:ClearLines(0)
-    perkTooltip2:ClearLines(0)
-    perkTooltip3:ClearLines(0)
-    perkTooltip1:SetSize(0, 0)
-    perkTooltip2:SetSize(0, 0)
-    perkTooltip3:SetSize(0, 0)
-    perkTooltip1:Hide()
-    perkTooltip2:Hide()
-    perkTooltip3:Hide()
-    perkBG:Hide()
+    perkTooltip:ClearLines(0)
+    perkTooltip:SetSize(0, 0)
+    perkTooltip:Hide()
 end
 
 function SetRankTexture(current, rank)
-    if not current.Rank then
-        current.Rank = current:CreateTexture(nil, "OVERLAY", nil, current:GetFrameLevel() + 3)
+    if not current.Border.Rank then
+        current.Border.Rank = current.Border:CreateFontString("OVERLAY")
     end
-    current.Rank:SetSize(current:GetWidth() / 2, current:GetHeight() / 2)
-    current.Rank:SetPoint("TOPRIGHT", -2, -2)
-
-    if (rank == 1) then
-        current.Rank:SetTexture(assets.rankone)
-    elseif (rank == 2) then
-        current.Rank:SetTexture(assets.ranktwo)
-    elseif (rank == 3) then
-        current.Rank:SetTexture(assets.rankthree)
-    end
+    current.Border.Rank:SetSize(current:GetWidth(), current:GetHeight() / 3)
+    current.Border.Rank:SetPoint("TOPLEFT", 0, 0)
+    current.Border.Rank:SetFont("Fonts\\FRIZQT__.TTF", 9, "OUTLINE")
+    current.Border.Rank:SetTextColor(1, 1, 1, 1)
+    current.Border.Rank:SetText("Lv. "..rank)
 end

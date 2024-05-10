@@ -3,7 +3,8 @@ Forgeframe:RegisterEvent("PLAYER_LOGIN")
 Forgeframe:SetScript(
     "OnEvent",
     function()
-        --InitializeTalentTree()
+        InitializeTalentTree()
+        
         initializeItemTooltips()
         InitializePerks()
         initializeAllStats()

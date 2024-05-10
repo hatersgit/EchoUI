@@ -220,12 +220,12 @@ function drawButtons()
 
         if WorldTierState.clicked == i then
             WorldTier.body.buttonBox.buttons[i].title:SetTextColor(255 / 255, 255 / 255, 255 / 255, 1)
-            WorldTier.body.buttonBox.buttons[i]:SetNormalTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]])
+            WorldTier.body.buttonBox.buttons[i]:SetNormalTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]], "BLEND")
             WorldTier.body.buttonBox.buttons[i]:SetHighlightTexture("")
         else
             WorldTier.body.buttonBox.buttons[i].title:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
             WorldTier.body.buttonBox.buttons[i]:SetNormalTexture("")
-            WorldTier.body.buttonBox.buttons[i]:SetHighlightTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]])
+            WorldTier.body.buttonBox.buttons[i]:SetHighlightTexture([[Interface\QuestFrame\UI-QuestTitleHighlight]], "BLEND")
         end
     end
 end
@@ -233,7 +233,7 @@ end
 function CreateWorldTierDisplay()
     WorldTierDisplay = UIParent:CreateFontString("OVERLAY")
     WorldTierDisplay:SetPoint("TOP", UIParent, "TOP", 0, -tmogsettings.headerheight)
-    WorldTierDisplay:SetFont("Fonts\\FRIZQT__.TTF", 22, "THICKOUTLINE")
-    WorldTierDisplay:SetText("WorldTier "..BASE.ACTIVE_TIER)
+    WorldTierDisplay:SetFont("Fonts\\FRIZQT__.TTF", 14, "THICKOUTLINE")
+    WorldTierDisplay:SetText("World Tier "..BASE.ACTIVE_TIER)
     WorldTierDisplay:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
 end

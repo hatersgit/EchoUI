@@ -46,7 +46,7 @@ ForgeTopic = {
     UNLEARN_TALENT = 2,
     -- Message Content: CharacterPointType
     -- will re-send all talents with GET_TALENTS topic if sucsessful
-    RESPEC_TALENTS = 3,
+    MULTICLASS = 3,
     RESPEC_TALENT_ERROR = 4,
     UPDATE_SPEC = 5,
     -- Message Content: specId
@@ -569,7 +569,8 @@ DeserializerDefinitions = {
             DELIMITER = "^",
             FIELDS = {
                 {
-                    NAME = "Id"
+                    NAME = "Id", 
+                    TYPE = FieldType.NUMBER
                 },
                 {
                     NAME = "Name"
@@ -636,13 +637,15 @@ DeserializerDefinitions = {
                                     DELIMITER = "$",
                                     FIELDS = {
                                         {
-                                            NAME = "Talent"
+                                            NAME = "Talent",
                                         },
                                         {
-                                            NAME = "TalentTabId"
+                                            NAME = "TalentTabId",
+                                            TYPE = FieldType.NUMBER
                                         },
                                         {
-                                            NAME = "RequiredRank"
+                                            NAME = "RequiredRank",
+                                            TYPE = FieldType.NUMBER
                                         }
                                     }
                                 }
@@ -1045,5 +1048,78 @@ function CheckEchosButton(button, var)
         button:SetBackdropColor(0 / 255, 0 / 255, 0 / 255, 0)
     else
         button:SetBackdropColor(188 / 255, 150 / 255, 28 / 255, .9)
+    end
+end
+
+function GetClassColorFor(caster)
+    local class = select(2,UnitClass(caster))
+    local color = RAID_CLASS_COLORS[class]
+    return color.r, color.g, color.b
+end
+
+CLASS_ID_LOOKUP = {
+    ["Warrior"] = 1,
+    ["Paladin"] = 2,
+    ["Hunter"] = 4,
+    ["Rogue"] = 8,
+    ["Priest"] = 16,
+    ["Death Knight"] = 32,
+    ["Shaman"] = 64,
+    ["Mage"] = 128,
+    ["Warlock"] = 256,
+    ["Druid"] = 1024,
+    ["Shapeshifter"] = 2048,
+}
+
+CLASS_MASK_TO_ID_LOOKUP = {
+    [1] = 1,
+    [2] = 2,
+    [4] = 3,
+    [8] = 4,
+    [16] = 5,
+    [32] = 6,
+    [64] = 7,
+    [128] = 8,
+    [256] = 9,
+    [1024] = 11,
+    [2048] = 12,
+}
+
+CLASS_ID_TO_MASK_LOOKUP = {
+    [1] = 1,
+    [2] = 2,
+    [3] = 4,
+    [4] = 8,
+    [5] = 16,
+    [6] = 32,
+    [7] = 64,
+    [8] = 128,
+    [9] = 256,
+    [11] = 1024,
+    [12] = 2048,
+}
+
+function GetClassMaskForBaseClass()
+    local class = CONSTANTS.CLASS
+    if CLASS_ID_LOOKUP[class] then
+        return CLASS_ID_LOOKUP[class]
+    else
+        return 0
+    end
+end
+
+function GetClassIdFromMask(mask)
+    if CLASS_MASK_TO_ID_LOOKUP[mask] then
+        return CLASS_MASK_TO_ID_LOOKUP[mask]
+    else
+        return 64
+    end
+end
+
+function GetClassMaskFromId(id)
+    if CLASS_ID_TO_MASK_LOOKUP[id] then
+        return CLASS_ID_TO_MASK_LOOKUP[id]
+    else
+        return 0
     end
 end
