@@ -156,7 +156,11 @@ function createWorldTierSelectWindow()
     SubscribeToForgeTopic(
         ForgeTopic.SEND_MAX_WORLD_TIER,
         function(msg)
-            BASE.UNLOCKED_MAX = tonumber(msg)
+            local split = ForgeSplit(";", msg)
+            print(dump(split))
+            BASE.ACTIVE_TIER = split[1]
+            BASE.UNLOCKED_MAX = split[2]
+            
             drawButtons()
             WorldTier.body.buttonBox.buttons[1]:GetScript("OnClick")(WorldTier.body.buttonBox.buttons[1], "LeftButton")
 
@@ -171,6 +175,9 @@ function createWorldTierSelectWindow()
             Portalmaster.body.tierdd.dd =
                 CreateEchosDropDown("typedd", Portalmaster.body.tierdd, "", Portalmaster.body.tierdd.Id)
             PORTALMASTER_STATE.redraw = true
+
+
+            WorldTierDisplay:SetText("World Tier "..BASE.ACTIVE_TIER)
         end
     )
 end
@@ -234,6 +241,5 @@ function CreateWorldTierDisplay()
     WorldTierDisplay = UIParent:CreateFontString("OVERLAY")
     WorldTierDisplay:SetPoint("TOP", UIParent, "TOP", 0, -tmogsettings.headerheight)
     WorldTierDisplay:SetFont("Fonts\\FRIZQT__.TTF", 14, "THICKOUTLINE")
-    WorldTierDisplay:SetText("World Tier "..BASE.ACTIVE_TIER)
     WorldTierDisplay:SetTextColor(188 / 255, 150 / 255, 28 / 255, 1)
 end
